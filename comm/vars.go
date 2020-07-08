@@ -1,9 +1,13 @@
 package comm
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/go-xorm/xorm"
+)
 
 var (
-	Gin *gin.Engine
-
-	FileView = false
+	Dir  string
+	Path string
+	Gin  *gin.Engine
+	Db   *xorm.Engine
 )

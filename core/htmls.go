@@ -1,23 +1,19 @@
-package utils
+package core
 
 import (
-	"gokins/comm"
 	"html/template"
 )
 
-var HtmlSource = template.New("go")
+var HtmlSource = template.New("")
 
-func InitHtmls() error {
-	HtmlSource.Funcs(comm.Gin.FuncMap)
+func init() {
+	//HtmlSource.Funcs(comm.Gin.FuncMap)
 	_, err := HtmlSource.New("head.html").Parse(`
 
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <meta name="viewport" content="initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,width=device-width"/>
 
 `)
-	if err != nil {
-		return err
-	}
 
 	_, err = HtmlSource.New("test.html").Parse(`
 <!DOCTYPE html>
@@ -33,8 +29,6 @@ go 内容：{{.cont}}
 </html>
 `)
 	if err != nil {
-		return err
+		println("err:" + err.Error())
 	}
-
-	return nil
 }

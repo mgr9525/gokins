@@ -1,5 +1,6 @@
 # https://github.com/github/gitignore/blob/master/Java.gitignore
 
+*.dat
 *.class
 
 # Mobile Tools for Java (J2ME)
