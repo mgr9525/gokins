@@ -1,13 +1,31 @@
 package main
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
+	"gokins/comm"
+	"gokins/utils"
+	"html/template"
+)
+
+var testHTML = `
+<html>
+<head><title>{{AppName}}-测试</title></head>
+<body>内容：{{.cont}}</body>
+</html>
+`
 
 func main() {
-	r := gin.Default()
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
-			"message": "pong",
-		})
+	comm.Gin = gin.Default()
+	comm.Gin.FuncMap = template.FuncMap{
+		"AppName": func() string {
+			return "mine app"
+		},
+	}
+	comm.Gin.Any("/ping", func(c *gin.Context) {
+		data := ruisUtil.NewMap()
+		data.Set("cont", "你好啊world!")
+		utils.RenderHTML(c, testHTML, data)
 	})
-	r.Run(":8050")
+	comm.Gin.Run(":8050")
 }
