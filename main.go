@@ -8,13 +8,6 @@ import (
 	"html/template"
 )
 
-var testHTML = `
-<html>
-<head><title>{{AppName}}-测试</title></head>
-<body>内容：{{.cont}}</body>
-</html>
-`
-
 func main() {
 	comm.Gin = gin.Default()
 	comm.Gin.FuncMap = template.FuncMap{
@@ -22,10 +15,17 @@ func main() {
 			return "mine app"
 		},
 	}
-	comm.Gin.Any("/ping", func(c *gin.Context) {
+	//comm.FileView=true
+	comm.Gin.LoadHTMLGlob("view/*")
+	comm.Gin.Any("/test", func(c *gin.Context) {
 		data := ruisUtil.NewMap()
 		data.Set("cont", "你好啊world!")
-		utils.RenderHTML(c, testHTML, data)
+		utils.Render(c, "test.html", data)
 	})
+
+	err := utils.InitHtmls()
+	if err != nil {
+		println("InitHtmls err:" + err.Error())
+	}
 	comm.Gin.Run(":8050")
 }

@@ -4,12 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/render"
 	"gokins/comm"
-	"html/template"
 )
 
-func RenderHTML(c *gin.Context, htmls string, data interface{}) {
-	t := template.New("test").Funcs(comm.Gin.FuncMap)
-	/*tpe:=reflect.TypeOf(c).Elem()
+func RenderHTML(c *gin.Context, name string, data interface{}) {
+	/*t := template.New("test").Funcs(comm.Gin.FuncMap)
+	tpe:=reflect.TypeOf(c).Elem()
 	vae:=reflect.ValueOf(c).Elem()
 	_,ok:=tpe.FieldByName("engine")
 	if ok{
@@ -17,16 +16,24 @@ func RenderHTML(c *gin.Context, htmls string, data interface{}) {
 		eg:=(*gin.Engine)(unsafe.Pointer(val))
 		//println("val:",eg)
 		t.Funcs(eg.FuncMap)
-	}*/
+	}
 	_, err := t.Parse(htmls)
 	if err != nil {
 		c.String(500, "errs:"+err.Error())
 		return
-	}
+	}*/
 
 	c.Render(200, render.HTML{
-		Template: t,
-		Name:     "",
+		Template: HtmlSource,
+		Name:     name,
 		Data:     data,
 	})
+}
+
+func Render(c *gin.Context, name string, data interface{}) {
+	if comm.FileView {
+		c.HTML(200, name, data)
+	} else {
+		RenderHTML(c, name, data)
+	}
 }
