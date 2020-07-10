@@ -19,3 +19,17 @@ func FindUser(xid string) *models.SysUser {
 	}
 	return nil
 }
+func FindUserName(nm string) *models.SysUser {
+	if nm == "" {
+		return nil
+	}
+	e := new(models.SysUser)
+	ok, err := comm.Db.Where("name=?", nm).Get(e)
+	if err != nil {
+		return nil
+	}
+	if ok {
+		return e
+	}
+	return nil
+}
