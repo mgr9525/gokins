@@ -2,14 +2,14 @@ package sysService
 
 import (
 	"gokins/comm"
-	"gokins/models"
+	"gokins/model"
 )
 
-func FindUser(xid string) *models.SysUser {
+func FindUser(xid string) *model.SysUser {
 	if xid == "" {
 		return nil
 	}
-	e := new(models.SysUser)
+	e := new(model.SysUser)
 	ok, err := comm.Db.Where("xid=?", xid).Get(e)
 	if err != nil {
 		return nil
@@ -19,11 +19,11 @@ func FindUser(xid string) *models.SysUser {
 	}
 	return nil
 }
-func FindUserName(nm string) *models.SysUser {
+func FindUserName(nm string) *model.SysUser {
 	if nm == "" {
 		return nil
 	}
-	e := new(models.SysUser)
+	e := new(model.SysUser)
 	ok, err := comm.Db.Where("name=?", nm).Get(e)
 	if err != nil {
 		return nil

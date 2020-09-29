@@ -3,11 +3,11 @@ package utilService
 import (
 	"github.com/gin-gonic/gin"
 	"gokins/core"
-	"gokins/models"
+	"gokins/model"
 	"gokins/service/sysService"
 )
 
-func CurrUser(c *gin.Context) *models.SysUser {
+func CurrUser(c *gin.Context) *model.SysUser {
 	tks := core.GetToken(c)
 	if tks == nil {
 		return nil

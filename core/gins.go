@@ -98,3 +98,14 @@ func GetToken(c *gin.Context) jwt.MapClaims {
 	}
 	return nil
 }
+
+func MidAccessAllow(c *gin.Context) {
+	c.Header("Access-Control-Allow-Origin", c.Request.Header.Get("Origin"))
+	c.Header("Access-Control-Allow-Methods", "*")
+	c.Header("Access-Control-Allow-Headers", "DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization")
+	c.Header("Access-Control-Allow-Credentials", "true")
+	if c.Request.Method == "OPTIONS" {
+		c.String(200, "request ok!")
+		c.Abort()
+	}
+}

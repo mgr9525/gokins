@@ -60,7 +60,7 @@ func main() {
 		c.HTML(200, "test.html", data)
 	})
 	route.Init()
-	err = comm.Gin.Run(":8050")
+	err = comm.Gin.Run(":8030")
 	if err != nil {
 		println("gin run err:" + err.Error())
 	}

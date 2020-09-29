@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : gokins
+ Source Server         : gokinsdb
  Source Server Type    : SQLite
  Source Server Version : 3030001
  Source Schema         : main
@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 08/07/2020 15:23:00
+ Date: 29/09/2020 18:59:32
 */
 
 PRAGMA foreign_keys = false;
@@ -36,22 +36,150 @@ CREATE TABLE "sys_user" (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-INSERT INTO "sys_user" VALUES (1, 'admin', 'root', NULL, '超级管理员', NULL, 'CURRENT_TIMESTAMP', NULL, NULL, NULL);
+BEGIN;
+INSERT INTO "sys_user" VALUES (1, 'admin', 'root', NULL, '超级管理员', NULL, '2020-07-08 07:25:53', NULL, NULL, NULL);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_model
+-- ----------------------------
+DROP TABLE IF EXISTS "t_model";
+CREATE TABLE "t_model" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "uid" integer,
+  "title" text,
+  "desc" text,
+  "times" datetime,
+  "del" integer
+);
+
+-- ----------------------------
+-- Records of t_model
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_model_run
+-- ----------------------------
+DROP TABLE IF EXISTS "t_model_run";
+CREATE TABLE "t_model_run" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "uid" integer,
+  "tid" integer,
+  "times" datetime,
+  "timesd" datetime,
+  "state" integer
+);
+
+-- ----------------------------
+-- Records of t_model_run
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_output
+-- ----------------------------
+DROP TABLE IF EXISTS "t_output";
+CREATE TABLE "t_output" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "type" varchar(50),
+  "tid" integer,
+  "output" text,
+  "times" datetime
+);
+
+-- ----------------------------
+-- Records of t_output
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_plungin
+-- ----------------------------
+DROP TABLE IF EXISTS "t_plungin";
+CREATE TABLE "t_plungin" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "tid" integer NOT NULL,
+  "title" text,
+  "type" integer DEFAULT 0,
+  "para" text,
+  "cont" text,
+  "times" datetime
+);
+
+-- ----------------------------
+-- Records of t_plungin
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_plungin_run
+-- ----------------------------
+DROP TABLE IF EXISTS "t_plungin_run";
+CREATE TABLE "t_plungin_run" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "pid" integer,
+  "tid" integer,
+  "times" datetime,
+  "timesd" datetime,
+  "state" integer,
+  "excode" integer,
+  "output" text
+);
+
+-- ----------------------------
+-- Records of t_plungin_run
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Indexes structure for table sys_user
 -- ----------------------------
-CREATE INDEX "IDX_sys_user_phone"
+CREATE INDEX "main"."IDX_sys_user_phone"
 ON "sys_user" (
   "phone" ASC
 );
-CREATE INDEX "name"
+CREATE INDEX "main"."name"
 ON "sys_user" (
   "name" ASC
 );
-CREATE INDEX "xid"
+CREATE INDEX "main"."xid"
 ON "sys_user" (
   "xid" ASC
 );
+
+-- ----------------------------
+-- Auto increment value for t_model
+-- ----------------------------
+
+-- ----------------------------
+-- Auto increment value for t_model_run
+-- ----------------------------
+
+-- ----------------------------
+-- Auto increment value for t_output
+-- ----------------------------
+
+-- ----------------------------
+-- Indexes structure for table t_output
+-- ----------------------------
+CREATE INDEX "main"."kv"
+ON "t_output" (
+  "type" ASC,
+  "tid" ASC
+);
+
+-- ----------------------------
+-- Auto increment value for t_plungin
+-- ----------------------------
+
+-- ----------------------------
+-- Auto increment value for t_plungin_run
+-- ----------------------------
 
 PRAGMA foreign_keys = true;

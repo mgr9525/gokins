@@ -7,6 +7,7 @@ import (
 	"gokins/core"
 	"gokins/service/sysService"
 	"gokins/service/utilService"
+	"time"
 )
 
 func LoginInfo(c *gin.Context) {
@@ -46,9 +47,9 @@ func Login(c *gin.Context) {
 		return
 	}
 
-	tks, err := core.SetToken(c, &jwt.MapClaims{
+	tks, err := core.CreateToken(&jwt.MapClaims{
 		"xid": usr.Xid,
-	}, pars.GetBool("remb"))
+	}, time.Hour*5)
 	if err != nil {
 		c.String(513, "获取token失败!")
 		return
