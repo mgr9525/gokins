@@ -3,7 +3,7 @@ package utilService
 import (
 	"gokins/core"
 	"gokins/model"
-	"gokins/service/sysService"
+	"gokins/service/dbService"
 
 	"github.com/gin-gonic/gin"
 )
@@ -17,7 +17,7 @@ func CurrUser(c *gin.Context) *model.SysUser {
 	if !ok || xid == "" {
 		return nil
 	}
-	return sysService.FindUser(xid)
+	return dbService.FindUser(xid)
 }
 func CurrMUser(c *gin.Context) *model.SysUser {
 	tu, ok := c.Get("lguser")

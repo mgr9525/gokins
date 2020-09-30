@@ -1,13 +1,16 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
 	"gokins/comm"
+	"gokins/core"
 	"gokins/route"
+	"gokins/service/dbService"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
 func init() {
@@ -53,6 +56,14 @@ func main() {
 		println("InitDb err:" + err.Error())
 		return
 	}
+	jwtKey := dbService.GetParam("jwt-key")
+	jkey := jwtKey.GetString("key")
+	if jkey == "" {
+		jkey = core.RandomString(32)
+		jwtKey.Set("key", jkey)
+		dbService.SetParam("jwt-key", jwtKey)
+	}
+	core.JwtKey = jkey
 	comm.Gin.Any("/test", func(c *gin.Context) {
 		data := ruisUtil.NewMap()
 		data.Set("cont", "你好啊world!")

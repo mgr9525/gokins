@@ -21,4 +21,12 @@ func Init() {
 	gpModel.Any("/list", core.GinHandler(server.ModelList))
 	gpModel.Any("/edit", core.GinHandler(server.ModelEdit))
 	gpModel.Any("/del", core.GinHandler(server.ModelDel))
+	gpModel.Any("/runs", core.GinHandler(server.ModelRuns))
+	gpModel.Any("/run", core.GinHandler(server.ModelRun))
+
+	gpPlug := comm.Gin.Group("/plug")
+	gpPlug.Use(utilService.MidNeedLogin)
+	gpPlug.Any("/list", core.GinHandler(server.PlugList))
+	gpPlug.Any("/edit", core.GinHandler(server.PlugEdit))
+	gpPlug.Any("/del", core.GinHandler(server.PlugDel))
 }

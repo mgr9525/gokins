@@ -10,10 +10,27 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 30/09/2020 15:39:55
+ Date: 30/09/2020 20:03:44
 */
 
 PRAGMA foreign_keys = false;
+
+-- ----------------------------
+-- Table structure for sys_param
+-- ----------------------------
+DROP TABLE IF EXISTS "sys_param";
+CREATE TABLE "sys_param" (
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
+  "key" varchar,
+  "cont" blob,
+  "times" datetime
+);
+
+-- ----------------------------
+-- Records of sys_param
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -97,32 +114,35 @@ BEGIN;
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_plungin
+-- Table structure for t_plugin
 -- ----------------------------
-DROP TABLE IF EXISTS "t_plungin";
-CREATE TABLE "t_plungin" (
+DROP TABLE IF EXISTS "t_plugin";
+CREATE TABLE "t_plugin" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "tid" integer NOT NULL,
   "title" text,
   "type" integer DEFAULT 0,
   "para" text,
   "cont" text,
-  "times" datetime
+  "times" datetime,
+  "sort" integer DEFAULT 100,
+  "del" integer DEFAULT 0
 );
 
 -- ----------------------------
--- Records of t_plungin
+-- Records of t_plugin
 -- ----------------------------
 BEGIN;
 COMMIT;
 
 -- ----------------------------
--- Table structure for t_plungin_run
+-- Table structure for t_plugin_run
 -- ----------------------------
-DROP TABLE IF EXISTS "t_plungin_run";
-CREATE TABLE "t_plungin_run" (
+DROP TABLE IF EXISTS "t_plugin_run";
+CREATE TABLE "t_plugin_run" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "pid" integer,
+  "mid" integer,
   "tid" integer,
   "times" datetime,
   "timesd" datetime,
@@ -132,10 +152,22 @@ CREATE TABLE "t_plungin_run" (
 );
 
 -- ----------------------------
--- Records of t_plungin_run
+-- Records of t_plugin_run
 -- ----------------------------
 BEGIN;
 COMMIT;
+
+-- ----------------------------
+-- Auto increment value for sys_param
+-- ----------------------------
+
+-- ----------------------------
+-- Indexes structure for table sys_param
+-- ----------------------------
+CREATE INDEX "main"."key"
+ON "sys_param" (
+  "key" ASC
+);
 
 -- ----------------------------
 -- Indexes structure for table sys_user
@@ -175,11 +207,11 @@ ON "t_output" (
 );
 
 -- ----------------------------
--- Auto increment value for t_plungin
+-- Auto increment value for t_plugin
 -- ----------------------------
 
 -- ----------------------------
--- Auto increment value for t_plungin_run
+-- Auto increment value for t_plugin_run
 -- ----------------------------
 
 PRAGMA foreign_keys = true;

@@ -1,15 +1,19 @@
 <template>
-	<el-dialog title="上传文件" :visible.sync="formVisible" :close-on-click-modal="false">
+	<el-dialog title="插件编辑" :visible.sync="formVisible" :close-on-click-modal="false">
         <el-col :span="24" style="margin-bottom: 20px;">
             <el-form :model="formData" label-width="80px" :rules="formRules" ref="formd">
-				<el-form-item label="任务名称" prop="title">
-					<el-input v-model="formData.title" auto-complete="off"></el-input>
+				<el-form-item label="名称" prop="Title">
+					<el-input v-model="formData.Title" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="短信名称" prop="name">
-					<el-input v-model="formData.name" auto-complete="off"></el-input>
+				<el-form-item label="类型" prop="Type">
+					<!-- <el-input v-model="formData.Type" auto-complete="off"></el-input> -->
+                    Shell
 				</el-form-item>
-				<el-form-item label="描述" prop="name">
-					<el-input type="textarea" v-model="formData.name" auto-complete="off"></el-input>
+				<el-form-item label="内容" prop="Cont">
+					<el-input type="textarea" v-model="formData.Cont" auto-complete="off" :rows="20"></el-input>
+				</el-form-item>
+				<el-form-item label="排序" prop="Sort">
+					<el-input v-model="formData.Sort" auto-complete="off"></el-input>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -29,15 +33,13 @@
                 formVisible:false,
 				formLoading: false,
 				formRules: {
-					tmpltid: [
-						{ required: true, message: '请选择模版' }
-					],title: [
-						{ required: true, message: '请输入任务名称' }
-					],name: [
-						{ required: true, message: '请输入短信名称' }
-					],phone: [
+					Title: [
 						{ required: true, message: '请输入参数' }
-					],level: [
+					],Type: [
+						{ required: true, message: '请输入参数' }
+					],Cont: [
+						{ required: true, message: '请输入参数' }
+					],Sort: [
 						{ required: true, message: '请输入参数' }
 					]
 				},
@@ -46,16 +48,26 @@
 			}
 		},
 		methods: {
-            show(){
+            show(tid,e){
                 this.formVisible=true;
                 this.formData={
-                    tmpltid:'',
-                    name: '',
-                    phone: '',
-                    level: '1',
-                    content: '',
-					enable:true,
-					send_time:''
+                    Id:'',
+                    Tid:tid,
+                    Type:1,
+                    Title: '',
+                    Para: '',
+                    Cont: '',
+                    Sort: '',
+                }
+                if(e)
+                this.formData={
+                    Id:e.Id,
+                    Tid:e.Tid,
+                    Type:e.Type,
+                    Title: e.Title,
+                    Para: e.Para,
+                    Cont: e.Cont,
+                    Sort: e.Sort,
                 }
             },/*handleSelect:function(id){
                 this.tmpltCont='';
@@ -80,7 +92,7 @@
 				this.$refs.formd.validate((valid) => {
 					if (valid) {
 						this.formLoading = true;
-						this.$post('/api/',this.formData).then(res=>{
+						this.$post('/plug/edit',this.formData).then(res=>{
               				console.log(res);
                             this.$emit('submitOK');
                             this.formLoading = false;

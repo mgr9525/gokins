@@ -42,12 +42,11 @@
                     Title: '',
                     Desc: '',
                 }
-                if(e){
+                if(e)
                 this.formData={
                     Id:e.Id,
                     Title: e.Title,
                     Desc: e.Desc,
-                }
                 }
             },/*handleSelect:function(id){
                 this.tmpltCont='';

@@ -29,7 +29,7 @@ func ModelList(c *gin.Context, req *ruisUtil.Map) {
 }
 func ModelEdit(c *gin.Context, req *models.Model) {
 	if req.Title == "" {
-		c.String(511, "参数错误")
+		c.String(500, "param err")
 		return
 	}
 	lguser := utilService.CurrMUser(c)
@@ -49,6 +49,42 @@ func ModelDel(c *gin.Context, req *ruisUtil.Map) {
 	m := &models.Model{}
 	if err := m.Del(int(id)); err != nil {
 		c.String(500, "save err:"+err.Error())
+		return
+	}
+	c.String(200, fmt.Sprintf("%d", m.Id))
+}
+
+func ModelRuns(c *gin.Context, req *ruisUtil.Map) {
+	pg, _ := req.GetInt("page")
+	tid, err := req.GetInt("tid")
+	if err != nil || tid <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	ls := make([]*models.ModelRun, 0)
+	ses := comm.Db.Where("tid=?", tid).OrderBy("id DESC")
+	page, err := core.XormFindPage(ses, &ls, pg, 20)
+	if err != nil {
+		c.String(500, "find err:"+err.Error())
+		return
+	}
+	for _, v := range ls {
+		v.ToUI()
+	}
+	c.JSON(200, page)
+}
+func ModelRun(c *gin.Context, req *ruisUtil.Map) {
+	id, err := req.GetInt("id")
+	if err != nil || id <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	lgusr := utilService.CurrMUser(c)
+	m := &models.ModelRun{}
+	m.Tid = int(id)
+	m.Uid = lgusr.Xid
+	if err := m.Add(); err != nil {
+		c.String(500, "add err:"+err.Error())
 		return
 	}
 	c.String(200, fmt.Sprintf("%d", m.Id))

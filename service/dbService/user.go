@@ -1,4 +1,4 @@
-package sysService
+package dbService
 
 import (
 	"gokins/comm"

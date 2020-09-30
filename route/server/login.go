@@ -3,7 +3,7 @@ package server
 import (
 	"gokins/comm"
 	"gokins/core"
-	"gokins/service/sysService"
+	"gokins/service/dbService"
 	"gokins/service/utilService"
 	"time"
 
@@ -39,7 +39,7 @@ func Login(c *gin.Context) {
 		c.String(500, "param err!")
 		return
 	}
-	usr := sysService.FindUserName(name)
+	usr := dbService.FindUserName(name)
 	if usr == nil {
 		c.String(511, "未找到用户!")
 		return
@@ -70,7 +70,7 @@ func Install(c *gin.Context) {
 		c.String(500, "param err!")
 		return
 	}
-	usr := sysService.FindUser("admin")
+	usr := dbService.FindUser("admin")
 	if usr == nil {
 		c.String(511, "未找到用户!")
 		return
