@@ -1,13 +1,15 @@
 package core
 
 import (
+	"net/http"
+	"net/url"
+	"reflect"
+	"strings"
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
 	ruisUtil "github.com/mgr9525/go-ruisutil"
-	"net/http"
-	"net/url"
-	"strings"
-	"time"
 )
 
 const cookieName = "gokinsk"
@@ -107,5 +109,49 @@ func MidAccessAllow(c *gin.Context) {
 	if c.Request.Method == "OPTIONS" {
 		c.String(200, "request ok!")
 		c.Abort()
+	}
+}
+
+func GinHandler(fn interface{}) func(c *gin.Context) {
+	return func(c *gin.Context) {
+		tf := reflect.TypeOf(fn)
+		vf := reflect.ValueOf(fn)
+		if tf.Kind() != reflect.Func {
+			c.String(500, "func err")
+			return
+		}
+		if tf.NumIn() <= 0 {
+			vf.Call(nil)
+			return
+		}
+		if tf.NumIn() <= 1 {
+			vf.Call([]reflect.Value{reflect.ValueOf(c)})
+			return
+		}
+
+		reqtf := tf.In(1)
+		reqtf1 := reqtf
+		if reqtf.Kind() == reflect.Ptr {
+			reqtf1 = reqtf.Elem()
+		}
+		reqvf := reflect.Zero(reqtf)
+
+		mp := ruisUtil.NewMap()
+		if err := c.BindJSON(mp.PMap()); err != nil {
+			c.String(500, "param err:"+err.Error())
+			return
+		}
+
+		if reqtf.AssignableTo(reflect.TypeOf(mp)) {
+			reqvf = reflect.ValueOf(mp)
+		} else if reqtf1.Kind() == reflect.Struct {
+			reqvf = reflect.New(reqtf1)
+			err := Maps2Struct(mp, reqvf.Interface())
+			if err != nil {
+				c.String(500, "param err")
+				return
+			}
+		}
+		vf.Call([]reflect.Value{reflect.ValueOf(c), reqvf})
 	}
 }

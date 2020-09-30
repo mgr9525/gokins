@@ -1,5 +1,19 @@
 <template>
-  <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+<div>
+  <el-form v-if="needInstall" :model="form1" :rules="rules1" ref="form1" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+    <h3 class="title">系统安装</h3>
+    <el-form-item prop="account">
+      设置管理员密码：root
+    </el-form-item>
+    <el-form-item prop="newPass">
+      <el-input type="password" v-model="form1.newPass" auto-complete="off" placeholder="新密码"></el-input>
+    </el-form-item>
+    <el-form-item style="width:100%;">
+      <el-button type="primary" style="width:100%;" @click="handleInstall" :loading="logining">安装</el-button>
+      <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
+    </el-form-item>
+  </el-form>
+  <el-form v-else :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
     <h3 class="title">系统登录</h3>
     <el-form-item prop="account">
       <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
@@ -13,6 +27,7 @@
       <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
     </el-form-item>
   </el-form>
+</div>
 </template>
 
 <script>
@@ -22,10 +37,20 @@
   export default {
     data() {
       return {
+        needInstall:false,
         logining: false,
+        form1:{
+          newPass:''
+        },
         ruleForm2: {
-          account: 'admin',
-          checkPass: '123456'
+          account: 'root',
+          checkPass: ''
+        },
+        rules1:{
+            newPass: [
+            { required: true, message: '请输入密码', trigger: 'blur' },
+            //{ validator: validaePass2 }
+          ]
         },
         rules2: {
           account: [
@@ -40,19 +65,28 @@
         checked: true
       };
     },
+    mounted(){
+      this.loadInfo();
+    },
     methods: {
+      loadInfo(){
+            this.$post('/comm/info').then(res => {
+              this.needInstall=res.data.need_install;
+              console.log('comm.info:',res.data);
+            });
+      },
       handleReset2() {
         this.$refs.ruleForm2.resetFields();
       },
       handleSubmit2(ev) {
-        var _this = this;
+        var that = this;
         this.$refs.ruleForm2.validate((valid) => {
           if (valid) {
-            //_this.$router.replace('/table');
+            //that.$router.replace('/table');
             this.logining = true;
             //NProgress.start();
             var loginParams = { name: this.ruleForm2.account, pass: this.ruleForm2.checkPass };
-            this.$post('/login/lg',loginParams).then(res => {
+            this.$post('/lg/login',loginParams).then(res => {
               this.logining = false;
               //NProgress.done();
               setToken(res.data);
@@ -67,6 +101,25 @@
           } else {
             console.log('error submit!!');
             return false;
+          }
+        });
+      },handleInstall(){
+        var that = this;
+        this.$refs.form1.validate((valid) => {
+          if (valid) {
+            this.logining = true;
+            this.$post('/lg/install',{newpass:this.form1.newPass}).then(res => {
+              this.logining = false;
+              //NProgress.done();
+              setToken(res.data);
+              this.$router.push({ path: '/' });
+            }).catch(err=>{
+              this.logining = false;
+              this.$message({
+                message: err.response?err.response.data||'服务器错误':'网络错误',
+                type: 'error'
+              });
+            });
           }
         });
       }

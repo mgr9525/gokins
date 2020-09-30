@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 29/09/2020 18:59:32
+ Date: 30/09/2020 15:39:55
 */
 
 PRAGMA foreign_keys = false;
@@ -46,11 +46,11 @@ COMMIT;
 DROP TABLE IF EXISTS "t_model";
 CREATE TABLE "t_model" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "uid" integer,
+  "uid" varchar,
   "title" text,
   "desc" text,
   "times" datetime,
-  "del" integer
+  "del" integer DEFAULT 0
 );
 
 -- ----------------------------
@@ -65,7 +65,7 @@ COMMIT;
 DROP TABLE IF EXISTS "t_model_run";
 CREATE TABLE "t_model_run" (
   "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "uid" integer,
+  "uid" varchar,
   "tid" integer,
   "times" datetime,
   "timesd" datetime,

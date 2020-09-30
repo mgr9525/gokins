@@ -2,8 +2,8 @@ import babelpolyfill from 'babel-polyfill'
 import Vue from 'vue'
 import App from './App'
 import ElementUI from 'element-ui'
-import 'element-ui/lib/theme-default/index.css'
-//import './assets/theme/theme-green/index.css'
+// import 'element-ui/lib/theme-default/index.css'
+import 'element-ui/lib/theme-chalk/index.css'
 import VueRouter from 'vue-router'
 import store from './vuex/store'
 import Vuex from 'vuex'
@@ -38,7 +38,20 @@ router.beforeEach((to, from, next) => {
     next({ path: '/login' })
     return;
   }
-  next();
+  if (to.path == '/') {
+    next({ path: '/models' })
+    return;
+  }
+  store.dispatch('getLgInfo').then(()=>{
+    if(store.state.userinfo.login){
+      next();
+    }else{
+      next({ path: '/login' })
+    }
+  }).catch(err=>{
+    console.log('getLgInfo err:',err)
+    next({ path: '/login' })
+  });
 })
 
 //router.afterEach(transition => {

@@ -3,14 +3,22 @@ package route
 import (
 	"gokins/comm"
 	"gokins/core"
-	"gokins/route/sysServer"
+	"gokins/route/server"
+	"gokins/service/utilService"
 )
 
 func Init() {
 	comm.Gin.Use(core.MidAccessAllow)
 	gpComm := comm.Gin.Group("/comm")
-	gpComm.Any("/info", sysServer.CommInfo)
-	gpLogin := comm.Gin.Group("/login")
-	gpLogin.Any("/info", sysServer.LoginInfo)
-	gpLogin.Any("/lg", sysServer.Login)
+	gpComm.Any("/info", server.CommInfo)
+	gpLogin := comm.Gin.Group("/lg")
+	gpLogin.Any("/info", server.LoginInfo)
+	gpLogin.Any("/login", server.Login)
+	gpLogin.Any("/install", server.Install)
+
+	gpModel := comm.Gin.Group("/model")
+	gpModel.Use(utilService.MidNeedLogin)
+	gpModel.Any("/list", core.GinHandler(server.ModelList))
+	gpModel.Any("/edit", core.GinHandler(server.ModelEdit))
+	gpModel.Any("/del", core.GinHandler(server.ModelDel))
 }
