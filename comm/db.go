@@ -40,7 +40,7 @@ const sqls = `
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 30/09/2020 20:03:44
+ Date: 02/10/2020 16:02:56
 */
 
 PRAGMA foreign_keys = false;
@@ -97,7 +97,9 @@ CREATE TABLE "t_model" (
   "title" text,
   "desc" text,
   "times" datetime,
-  "del" integer DEFAULT 0
+  "del" integer DEFAULT 0,
+  "envs" text,
+  "wrkdir" text
 );
 
 -- ----------------------------
@@ -116,7 +118,8 @@ CREATE TABLE "t_model_run" (
   "tid" integer,
   "times" datetime,
   "timesd" datetime,
-  "state" integer
+  "state" integer,
+  "errs" text
 );
 
 -- ----------------------------
@@ -156,7 +159,8 @@ CREATE TABLE "t_plugin" (
   "cont" text,
   "times" datetime,
   "sort" integer DEFAULT 100,
-  "del" integer DEFAULT 0
+  "del" integer DEFAULT 0,
+  "exend" integer DEFAULT 0
 );
 
 -- ----------------------------

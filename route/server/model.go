@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gokins/comm"
 	"gokins/core"
+	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/utilService"
@@ -87,5 +88,15 @@ func ModelRun(c *gin.Context, req *ruisUtil.Map) {
 		c.String(500, "add err:"+err.Error())
 		return
 	}
+	mgr.ExecMgr.Refresh()
 	c.String(200, fmt.Sprintf("%d", m.Id))
+}
+func ModelStop(c *gin.Context, req *ruisUtil.Map) {
+	id, err := req.GetInt("id")
+	if err != nil || id <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	mgr.ExecMgr.StopTask(int(id))
+	c.String(200, "ok")
 }

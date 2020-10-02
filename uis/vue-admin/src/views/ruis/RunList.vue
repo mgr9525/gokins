@@ -26,8 +26,8 @@
 				<template slot-scope="{row}">
 					<span v-if="row.State==-1" style="color:red">已停止</span>
 					<span v-if="row.State==0" style="color:red">等待中</span>
-					<span v-if="row.State==1" style="color:green">运行中</span>
-					<span v-if="row.State==2" style="color:green">运行失败</span>
+					<span v-if="row.State==1" style="color:blue">运行中</span>
+					<span v-if="row.State==2" style="color:red">运行失败</span>
 					<span v-if="row.State==4" style="color:green">运行成功</span>
 				</template>
 			</el-table-column>

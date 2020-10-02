@@ -10,4 +10,6 @@ var (
 	Path string
 	Gin  *gin.Engine
 	Db   *xorm.Engine
+
+	RunTaskLen int = 5
 )

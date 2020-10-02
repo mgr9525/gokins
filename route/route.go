@@ -23,6 +23,7 @@ func Init() {
 	gpModel.Any("/del", core.GinHandler(server.ModelDel))
 	gpModel.Any("/runs", core.GinHandler(server.ModelRuns))
 	gpModel.Any("/run", core.GinHandler(server.ModelRun))
+	gpModel.Any("/stop", core.GinHandler(server.ModelStop))
 
 	gpPlug := comm.Gin.Group("/plug")
 	gpPlug.Use(utilService.MidNeedLogin)

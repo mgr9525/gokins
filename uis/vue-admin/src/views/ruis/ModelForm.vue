@@ -2,11 +2,17 @@
 	<el-dialog title="流水线编辑" :visible.sync="formVisible" :close-on-click-modal="false">
         <el-col :span="24" style="margin-bottom: 20px;">
             <el-form :model="formData" label-width="80px" :rules="formRules" ref="formd">
-				<el-form-item label="任务名称" prop="Title">
+				<el-form-item label="项目名称" prop="Title">
 					<el-input v-model="formData.Title" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="描述">
 					<el-input type="textarea" v-model="formData.Desc" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="工作目录">
+					<el-input v-model="formData.Wrkdir" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="环境变量">
+					<el-input type="textarea" v-model="formData.Envs" auto-complete="off" :rows="8" placeholder="每行一个变量,格式：name=xxxx"></el-input>
 				</el-form-item>
 			</el-form>
 		</el-col>
@@ -41,12 +47,16 @@
                     Id:'',
                     Title: '',
                     Desc: '',
+                    Wrkdir:'',
+                    Envs:''
                 }
                 if(e)
                 this.formData={
                     Id:e.Id,
                     Title: e.Title,
                     Desc: e.Desc,
+                    Wrkdir:e.Wrkdir,
+                    Envs:e.Envs
                 }
             },/*handleSelect:function(id){
                 this.tmpltCont='';

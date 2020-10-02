@@ -3,6 +3,7 @@ package main
 import (
 	"gokins/comm"
 	"gokins/core"
+	"gokins/mgr"
 	"gokins/route"
 	"gokins/service/dbService"
 	"net/http"
@@ -10,7 +11,6 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
 func init() {
@@ -64,15 +64,11 @@ func main() {
 		dbService.SetParam("jwt-key", jwtKey)
 	}
 	core.JwtKey = jkey
-	comm.Gin.Any("/test", func(c *gin.Context) {
-		data := ruisUtil.NewMap()
-		data.Set("cont", "你好啊world!")
-		//utils.html(c, "test.html", data)
-		c.HTML(200, "test.html", data)
-	})
 	route.Init()
+	mgr.ExecMgr.Start()
 	err = comm.Gin.Run(":8030")
 	if err != nil {
 		println("gin run err:" + err.Error())
 	}
+	mgr.Cancel()
 }

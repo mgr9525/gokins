@@ -15,6 +15,9 @@
 				<el-form-item label="排序" prop="Sort">
 					<el-input v-model="formData.Sort" auto-complete="off"></el-input>
 				</el-form-item>
+				<el-form-item label="执行失败">
+					<el-switch v-model="formData.exend" active-text="停止后续所有任务"></el-switch>
+				</el-form-item>
 			</el-form>
 		</el-col>
 		<!--工具条-->
@@ -58,6 +61,7 @@
                     Para: '',
                     Cont: '',
                     Sort: '',
+                    exend:true,
                 }
                 if(e)
                 this.formData={
@@ -68,6 +72,7 @@
                     Para: e.Para,
                     Cont: e.Cont,
                     Sort: e.Sort,
+                    exend:e.Exend==1
                 }
             },/*handleSelect:function(id){
                 this.tmpltCont='';
@@ -91,7 +96,8 @@
 			},*/formSubmit(){
 				this.$refs.formd.validate((valid) => {
 					if (valid) {
-						this.formLoading = true;
+                        this.formLoading = true;
+                        this.formData.Exend=this.formData.exend?1:2;
 						this.$post('/plug/edit',this.formData).then(res=>{
               				console.log(res);
                             this.$emit('submitOK');

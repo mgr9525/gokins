@@ -16,6 +16,7 @@ type Plugin struct {
 	Cont  string
 	Times time.Time
 	Sort  int
+	Exend int
 }
 
 func (Plugin) TableName() string {
@@ -25,7 +26,7 @@ func (Plugin) TableName() string {
 func (c *Plugin) Save() error {
 	var err error
 	if c.Id > 0 {
-		_, err = comm.Db.Cols("type", "title", "para", "cont", "sort").Where("id=?", c.Id).Update(c)
+		_, err = comm.Db.Cols("type", "title", "para", "cont", "sort", "exend").Where("id=?", c.Id).Update(c)
 	} else {
 		if c.Tid <= 0 {
 			return errors.New("what?")
