@@ -3,6 +3,7 @@ package server
 import (
 	"fmt"
 	"gokins/comm"
+	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/dbService"
@@ -73,7 +74,11 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	for _, v := range ls {
 		v.ToUI(mr.Id)
 	}
-	c.JSON(200, ls)
+
+	res := ruisUtil.NewMap()
+	res.Set("list", ls)
+	res.Set("end", mr.State >= 2)
+	c.JSON(200, res)
 }
 func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 	tid, err := req.GetInt("tid")
@@ -93,12 +98,10 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 	}
 	e := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
 	res := ruisUtil.NewMap()
-	res.Set("up", false)
-	res.Set("text", "")
-	if e.State == 1 {
-		res.Set("up", true)
-		res.Set("text", e.Output)
-	} else if e.State >= 2 {
+	res.Set("up", true)
+	res.Set("text", mgr.ExecMgr.TaskRead(mr.Id, e.Id))
+	if e != nil && e.State >= 2 {
+		res.Set("up", false)
 		res.Set("text", e.Output)
 	}
 	c.JSON(200, res)

@@ -64,6 +64,7 @@
 			this.getList();
 		},destroyed(){
 			clearInterval(window.plugTimer);
+			window.plugTimer=null;
 		},
 		methods: {
 			//获取列表
@@ -73,7 +74,11 @@
 				this.$post('/plug/runs',{id:this.tid}).then((res) => {
               		console.log(res);
 					this.loading = false;
-					this.listdata = res.data;
+					this.listdata = res.data.list;
+					if(res.data.end==true){
+						clearInterval(window.plugTimer);
+						window.plugTimer=null;
+					}
 				}).catch(err=>{
 					this.loading = false;
 					this.$message({
@@ -118,6 +123,7 @@
 				if(v&&v.up==false)return
 				this.$post('/plug/log',{tid:this.tid,pid:this.selid}).then(res=>{
 					this.logs[this.selid]=res.data;
+					this.$forceUpdate();
 				})
 			},batchRemove(){
 

@@ -13,6 +13,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	ruisIo "github.com/mgr9525/go-ruisutil/ruisio"
@@ -21,12 +22,14 @@ import (
 )
 
 type RunTask struct {
-	Md     *model.TModel
-	Mr     *model.TModelRun
-	plugs  []*model.TPlugin
-	ctx    context.Context
-	cncl   context.CancelFunc
-	stdout *bytes.Buffer
+	Md    *model.TModel
+	Mr    *model.TModelRun
+	plugs []*model.TPlugin
+	ctx   context.Context
+	cncl  context.CancelFunc
+	lk    sync.Mutex
+	stds  map[int]*bytes.Buffer
+	//outs  map[int]*string
 }
 
 func (c *RunTask) start() {
@@ -44,6 +47,8 @@ func (c *RunTask) start() {
 func (c *RunTask) run() {
 	defer ruisUtil.Recovers("RunTask start", nil)
 	c.plugs = nil
+	c.stds = make(map[int]*bytes.Buffer)
+	//c.outs = make(map[int]*string)
 	if c.Md.Wrkdir != "" {
 		if ruisIo.PathExists(c.Md.Wrkdir) {
 			if c.Md.Clrdir == 1 {
@@ -120,11 +125,13 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rterr error) {
 		name = "cmd"
 		par0 = "/c"
 	}
-	c.stdout = &bytes.Buffer{}
-	//var stderr bytes.Buffer
+	stdout := &bytes.Buffer{}
+	c.lk.Lock()
+	c.stds[rn.Id] = stdout
+	c.lk.Unlock()
 	cmd := exec.CommandContext(c.ctx, name, par0, pgn.Cont)
-	cmd.Stdout = c.stdout
-	cmd.Stderr = c.stdout
+	cmd.Stdout = stdout
+	cmd.Stderr = stdout
 	if c.Md.Envs != "" {
 		str := strings.ReplaceAll(c.Md.Envs, "\t", "")
 		envs := strings.Split(str, "\n")
@@ -143,12 +150,22 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rterr error) {
 		rn.Excode = cmd.ProcessState.ExitCode()
 	}
 
+	c.lk.Lock()
+	defer c.lk.Unlock()
+	rn.Output = stdout.String()
+	/*if c.outs[rn.Id] == nil {
+		rn.Output = stdout.String()
+	} else {
+		*c.outs[rn.Id] += stdout.String()
+		rn.Output = *c.outs[rn.Id]
+	}*/
+
 	rn.Timesd = time.Now()
-	rn.Output = c.stdout.String()
 	_, err = comm.Db.Cols("state", "excode", "timesd", "output").Where("id=?", rn.Id).Update(rn)
 	if err != nil {
 		return err
 	}
+	delete(c.stds, rn.Id)
 	if pgn.Exend == 1 && rn.Excode != 0 {
 		return fmt.Errorf("程序执行错误：%d", rn.Excode)
 	}
@@ -171,6 +188,22 @@ func (c *RunTask) stop() {
 		c.cncl()
 		c.cncl = nil
 	}
+}
+
+func (c *RunTask) read(id int) string {
+	c.lk.Lock()
+	defer c.lk.Unlock()
+	if c.stds[id] == nil {
+		return ""
+	}
+	return c.stds[id].String()
+	/*if c.outs[id] == nil {
+		s := ""
+		c.outs[id] = &s
+	}
+	out := c.stds[id].String()
+	*c.outs[id] += out
+	return *c.outs[id]*/
 }
 
 func rmDirFiles(dir string) error {

@@ -4,7 +4,8 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true">
 				<el-form-item>
-					<el-button type="primary" v-on:click="getList">查询</el-button>
+					<el-button type="warning" @click="$router.back(-1)">返回</el-button>
+					<el-button type="primary" v-on:click="getList">刷新</el-button>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="$refs.editor.show(tid)">新增</el-button>
