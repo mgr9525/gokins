@@ -19,6 +19,20 @@ func GetPlugin(id int) *model.TPlugin {
 	}
 	return nil
 }
+func GetPluginRun(id int) *model.TPluginRun {
+	if id <= 0 {
+		return nil
+	}
+	e := new(model.TPluginRun)
+	ok, err := comm.Db.Where("id=?", id).Get(e)
+	if err != nil {
+		return nil
+	}
+	if ok {
+		return e
+	}
+	return nil
+}
 func FindPluginRun(mid, tid, pid int) *model.TPluginRun {
 	if mid <= 0 || tid <= 0 || pid <= 0 {
 		return nil

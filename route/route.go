@@ -18,6 +18,7 @@ func Init() {
 
 	gpModel := comm.Gin.Group("/model")
 	gpModel.Use(utilService.MidNeedLogin)
+	gpModel.Any("/get", core.GinHandler(server.ModelGet))
 	gpModel.Any("/list", core.GinHandler(server.ModelList))
 	gpModel.Any("/edit", core.GinHandler(server.ModelEdit))
 	gpModel.Any("/del", core.GinHandler(server.ModelDel))
@@ -30,4 +31,6 @@ func Init() {
 	gpPlug.Any("/list", core.GinHandler(server.PlugList))
 	gpPlug.Any("/edit", core.GinHandler(server.PlugEdit))
 	gpPlug.Any("/del", core.GinHandler(server.PlugDel))
+	gpPlug.Any("/runs", core.GinHandler(server.PlugRuns))
+	gpPlug.Any("/log", core.GinHandler(server.PlugLog))
 }

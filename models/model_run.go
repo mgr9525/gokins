@@ -13,6 +13,7 @@ type ModelRun struct {
 	Times  time.Time
 	Timesd time.Time
 	State  int
+	Errs   string
 
 	Nick   string `xorm:"-"`
 	Times1 string `xorm:"-"`

@@ -13,6 +13,7 @@ type TModel struct {
 	Del    int
 	Envs   string
 	Wrkdir string
+	Clrdir int
 }
 
 type TModelRun struct {

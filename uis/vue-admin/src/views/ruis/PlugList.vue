@@ -21,13 +21,14 @@
 					<span>{{ row.Title }}</span>
 				</template>
 			</el-table-column>
+			<el-table-column label="类型" width="80" sortable>
+				<template slot-scope="{row}">
+					<span>Shell</span>
+				</template>
+			</el-table-column>
 			<el-table-column prop="Sort" label="排序" width="100" sortable>
 			</el-table-column>
-			<el-table-column label="状态" width="80">
-				<template slot-scope="{row}">
-					<span v-if="row.Cancel" style="color:red">取消授权</span>
-					<span v-if="!row.Cancel" style="color:green">正常</span>
-				</template>
+			<el-table-column prop="Times" label="创建时间" width="200" sortable>
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="{row}">
@@ -82,6 +83,7 @@ import PlugForm from './PlugForm'
 					this.listdata = res.data;
 					//NProgress.done();
 				}).catch(err=>{
+					this.loading = false;
 					this.$message({
 						message: err.response.data||'服务器错误',
 						type: 'error'

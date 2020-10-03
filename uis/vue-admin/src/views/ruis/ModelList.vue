@@ -21,16 +21,16 @@
 			</el-table-column> -->
 			<el-table-column type="index" width="60">
 			</el-table-column>
-			<el-table-column label="名称" sortable>
+			<el-table-column label="名称" width="250" sortable>
 				<template slot-scope="{row}">
 					<div class="wxmpTit">
 					<el-link type="primary" @click="$router.push({path:'/models/runs?id='+row.Id})">
-					<img :src="row.Avat"/>
+					<!-- <img :src="row.Avat"/> -->
 					{{ row.Title }}</el-link>
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column prop="Desc" label="描述" width="180" sortable>
+			<el-table-column prop="Desc" label="描述" sortable>
 			</el-table-column>
 			<el-table-column label="状态" width="80">
 				<template slot-scope="{row}">
@@ -41,7 +41,7 @@
 			<el-table-column label="操作" width="150">
 				<template slot-scope="{row}">
 					<el-button size="small" @click="$refs.editor.show(row)">编辑</el-button>
-					<el-button size="small" @click="$router.push({path:'/models/info?id='+row.Id})">插件</el-button>
+					<!-- <el-button size="small" @click="$router.push({path:'/models/info?id='+row.Id})">插件</el-button> -->
               <el-popconfirm title="确定要删除吗？" @onConfirm="handleDel(row)">
 					<el-button type="danger" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
@@ -96,6 +96,7 @@ import ModelForm from './ModelForm'
 					this.filters.page=res.data.Page;
 					//NProgress.done();
 				}).catch(err=>{
+					this.loading = false;
 					this.$message({
 						message: err.response.data||'服务器错误',
 						type: 'error'

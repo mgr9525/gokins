@@ -14,6 +14,7 @@ type Model struct {
 	Times  time.Time
 	Envs   string
 	Wrkdir string
+	Clrdir int
 }
 
 func (Model) TableName() string {
@@ -23,7 +24,7 @@ func (Model) TableName() string {
 func (c *Model) Save() error {
 	var err error
 	if c.Id > 0 {
-		_, err = comm.Db.Cols("title", "desc", "envs", "wrkdir").Where("id=?", c.Id).Update(c)
+		_, err = comm.Db.Cols("title", "desc", "envs", "wrkdir", "clrdir").Where("id=?", c.Id).Update(c)
 	} else {
 		c.Times = time.Now()
 		_, err = comm.Db.Insert(c)

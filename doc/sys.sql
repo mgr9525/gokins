@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 02/10/2020 16:02:56
+ Date: 02/10/2020 22:40:17
 */
 
 PRAGMA foreign_keys = false;
@@ -69,7 +69,8 @@ CREATE TABLE "t_model" (
   "times" datetime,
   "del" integer DEFAULT 0,
   "envs" text,
-  "wrkdir" text
+  "wrkdir" text,
+  "clrdir" integer DEFAULT 0
 );
 
 -- ----------------------------

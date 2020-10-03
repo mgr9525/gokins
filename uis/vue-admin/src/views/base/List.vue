@@ -89,6 +89,7 @@
 					this.filters.page=res.data.Page;
 					//NProgress.done();
 				}).catch(err=>{
+					this.loading = false;
 					this.$message({
 						message: err.response.data||'服务器错误',
 						type: 'error'

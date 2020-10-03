@@ -7,12 +7,26 @@ import (
 	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
+	"gokins/service/dbService"
 	"gokins/service/utilService"
 
 	"github.com/gin-gonic/gin"
 	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
+func ModelGet(c *gin.Context, req *ruisUtil.Map) {
+	id, err := req.GetInt("id")
+	if err != nil || id <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	m := dbService.GetModel(int(id))
+	if m == nil {
+		c.String(404, "not found")
+		return
+	}
+	c.JSON(200, m)
+}
 func ModelList(c *gin.Context, req *ruisUtil.Map) {
 	pg, _ := req.GetInt("page")
 	q := req.GetString("q")

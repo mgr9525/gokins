@@ -8,8 +8,11 @@
 				<el-form-item label="描述">
 					<el-input type="textarea" v-model="formData.Desc" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="工作目录">
+				<el-form-item label="运行目录">
 					<el-input v-model="formData.Wrkdir" auto-complete="off"></el-input>
+				</el-form-item>
+				<el-form-item label="目录问题">
+					<el-switch v-model="formData.clrdir" active-text="创建或清空运行目录"></el-switch>
 				</el-form-item>
 				<el-form-item label="环境变量">
 					<el-input type="textarea" v-model="formData.Envs" auto-complete="off" :rows="8" placeholder="每行一个变量,格式：name=xxxx"></el-input>
@@ -47,16 +50,18 @@
                     Id:'',
                     Title: '',
                     Desc: '',
+                    Envs:'',
                     Wrkdir:'',
-                    Envs:''
+                    clrdir:false
                 }
                 if(e)
                 this.formData={
                     Id:e.Id,
                     Title: e.Title,
                     Desc: e.Desc,
+                    Envs:e.Envs,
                     Wrkdir:e.Wrkdir,
-                    Envs:e.Envs
+                    clrdir:e.Clrdir==1
                 }
             },/*handleSelect:function(id){
                 this.tmpltCont='';
@@ -81,6 +86,7 @@
 				this.$refs.formd.validate((valid) => {
 					if (valid) {
 						this.formLoading = true;
+                        this.formData.Clrdir=this.formData.clrdir?1:2;
 						this.$post('/model/edit',this.formData).then(res=>{
               				console.log(res);
                             this.$emit('submitOK');
