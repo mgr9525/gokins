@@ -34,6 +34,8 @@ func init() {
 	}
 	comm.Gin.StaticFS("/css", http.Dir(comm.Dir+"/ui/css"))
 	comm.Gin.StaticFS("/js", http.Dir(comm.Dir+"/ui/js"))
+	comm.Gin.StaticFS("/img", http.Dir(comm.Dir+"/ui/img"))
+	comm.Gin.StaticFS("/fonts", http.Dir(comm.Dir+"/ui/fonts"))
 	comm.Gin.StaticFile("/index.html", comm.Dir+"/ui/index.html")
 	comm.Gin.StaticFile("/favicon.ico", comm.Dir+"/ui/favicon.ico")
 	/*comm.Gin.FuncMap = template.FuncMap{
