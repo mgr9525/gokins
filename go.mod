@@ -3,7 +3,6 @@ module gokins
 go 1.14
 
 require (
-	git.code.oa.com/cloud_energy_studio/util v0.0.0-20200929075741-37189079a22d
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gin-gonic/gin v1.6.3
 	github.com/go-xorm/xorm v0.7.9
