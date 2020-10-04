@@ -9,9 +9,6 @@ import (
 	"strings"
 
 	ruisUtil "github.com/mgr9525/go-ruisutil"
-
-	"git.code.oa.com/cloud_energy_studio/util/logger"
-	"google.golang.org/protobuf/proto"
 )
 
 // Maps2Struct 转换
@@ -171,7 +168,6 @@ func Struct2Struct(src interface{}, dist interface{}) (rterr error) {
 	dugName := ""
 	defer func() {
 		if errs := recover(); errs != nil {
-			logger.Errorf("Struct2Struct dugName=%s, panic:%+v", dugName, errs)
 			rterr = errors.New(fmt.Sprintf("dugName=%s, errs=%+v", dugName, errs))
 		}
 	}()
@@ -294,7 +290,7 @@ func Struct2Struct(src interface{}, dist interface{}) (rterr error) {
 func setValue(vf reflect.Value, v interface{}) {
 	defer func() {
 		if errs := recover(); errs != nil {
-			logger.Errorf("setValue name:%s,err=%s", vf.String(), errs)
+			println("setValue name:%s,err=%s", vf.String(), errs)
 		}
 	}()
 	vf.Set(reflect.ValueOf(v))
@@ -434,7 +430,6 @@ func Bytes2Struct(bts []byte, dist interface{}) error {
 func Obj2Slice(obj interface{}, dtf reflect.Type) (ret reflect.Value, rterr error) {
 	defer func() {
 		if errs := recover(); errs != nil {
-			logger.Errorf("Obj2Slice dtfName=%s, panic:%+v", dtf.Name(), errs)
 			rterr = errors.New(fmt.Sprintf("dtfName=%s, errs=%+v", dtf.Name(), errs))
 		}
 	}()
@@ -516,33 +511,3 @@ func Obj2Slice(obj interface{}, dist interface{}) error {
 	}
 	return nil
 }*/
-
-// PutProtoMsgData 填充rsp.Data字段
-func PutProtoMsgData(rsp proto.Message) {
-	defer func() {
-		if errs := recover(); errs != nil {
-			logger.Errorf("ProtoMsgData ,err=%s", errs)
-		}
-	}()
-	tf := reflect.TypeOf(rsp)
-	vf := reflect.ValueOf(rsp)
-	if tf.Kind() != reflect.Ptr {
-		return
-	}
-
-	tf = tf.Elem()
-	vf = vf.Elem()
-	if vf.Kind() == reflect.Invalid {
-		return
-	}
-
-	tfd, ok := tf.FieldByName("Data")
-	if !ok || tfd.Type.Kind() != reflect.Ptr {
-		return
-	}
-	vfd := vf.FieldByIndex(tfd.Index)
-	if vfd.Elem().Kind() != reflect.Invalid {
-		return
-	}
-	vfd.Set(reflect.New(tfd.Type.Elem()))
-}
