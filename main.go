@@ -28,7 +28,7 @@ func init() {
 	}
 	println("dir:" + dir)
 	flag.StringVar(&comm.Dir, "d", dir, "数据目录")
-	flag.StringVar(&comm.Host, "h", ":8030", "绑定地址")
+	flag.StringVar(&comm.Host, "bind", ":8030", "绑定地址")
 	flag.Parse()
 	comm.Gin = gin.Default()
 }
