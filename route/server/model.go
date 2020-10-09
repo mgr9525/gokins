@@ -9,6 +9,7 @@ import (
 	"gokins/models"
 	"gokins/service/dbService"
 	"gokins/service/utilService"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	ruisUtil "github.com/mgr9525/go-ruisutil"
@@ -113,4 +114,42 @@ func ModelStop(c *gin.Context, req *ruisUtil.Map) {
 	}
 	mgr.ExecMgr.StopTask(int(id))
 	c.String(200, "ok")
+}
+func ModelCopy(c *gin.Context, req *ruisUtil.Map) {
+	id, err := req.GetInt("id")
+	if err != nil || id <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	m := dbService.GetModel(int(id))
+	if m == nil {
+		c.String(404, "not found")
+		return
+	}
+
+	var ls []*model.TPlugin
+	err = comm.Db.Where("del!=1 and tid=?", m.Id).Find(&ls)
+	if err != nil {
+		c.String(500, "find err:"+err.Error())
+		return
+	}
+
+	lguser := utilService.CurrMUser(c)
+	m.Uid = lguser.Xid
+	m.Id = 0
+	m.Del = 0
+	m.Times = time.Now()
+	m.Title = m.Title + "_Copy"
+	_, err = comm.Db.Insert(m)
+	if err != nil || m.Id <= 0 {
+		c.String(500, "add err:"+err.Error())
+		return
+	}
+
+	for _, v := range ls {
+		v.Id = 0
+		v.Tid = m.Id
+		comm.Db.Insert(v)
+	}
+	c.String(200, fmt.Sprintf("%d", m.Id))
 }

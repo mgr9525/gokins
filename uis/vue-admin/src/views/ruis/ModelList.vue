@@ -32,14 +32,12 @@
 			</el-table-column>
 			<el-table-column prop="Desc" label="描述" sortable>
 			</el-table-column>
-			<el-table-column label="状态" width="80">
-				<template slot-scope="{row}">
-					<span v-if="row.Cancel" style="color:red">取消授权</span>
-					<span v-if="!row.Cancel" style="color:green">正常</span>
-				</template>
+			<el-table-column prop="Times" label="创建时间" width="200" sortable>
 			</el-table-column>
-			<el-table-column label="操作" width="150">
+			<el-table-column label="操作" width="300">
 				<template slot-scope="{row}">
+					<el-button size="small" type="primary" @click="handleRun(row)">运行</el-button>
+					<el-button size="small" type="info" @click="handleCopy(row)">复制</el-button>
 					<el-button size="small" @click="$refs.editor.show(row)">编辑</el-button>
 					<!-- <el-button size="small" @click="$router.push({path:'/models/info?id='+row.Id})">插件</el-button> -->
               <el-popconfirm title="确定要删除吗？" @onConfirm="handleDel(row)">
@@ -120,6 +118,26 @@ import ModelForm from './ModelForm'
 				});
 			},batchRemove(){
 
+			},handleRun(et){
+				this.$post('/model/run',{id:et.Id}).then(res=>{
+					//this.$message('操作成功');
+					this.$router.push('/models/info?id='+res.data);
+				}).catch(err=>{
+					this.$message({
+						message: err.response?err.response.data||'服务器错误':'网络错误',
+						type: 'error'
+					});
+				});
+			},handleCopy(et){
+				this.$post('/model/copy',{id:et.Id}).then(res=>{
+					//this.$message('操作成功');
+					this.$router.push('/models/runs?id='+res.data);
+				}).catch(err=>{
+					this.$message({
+						message: err.response?err.response.data||'服务器错误':'网络错误',
+						type: 'error'
+					});
+				});
 			}
 		}
 	}
