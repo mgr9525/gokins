@@ -8,6 +8,7 @@ import (
 var (
 	Dir  string
 	Path string
+	Host string
 	Gin  *gin.Engine
 	Db   *xorm.Engine
 

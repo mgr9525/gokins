@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"gokins/comm"
 	"gokins/core"
 	"gokins/mgr"
@@ -19,38 +20,17 @@ func init() {
 		return
 	}
 	println("path:" + path)
+	comm.Path = path
 	dir, err := filepath.Abs(filepath.Dir(path))
 	if err != nil {
 		println("dir err:" + err.Error())
 		return
 	}
 	println("dir:" + dir)
-	comm.Path = path
-	comm.Dir = dir
+	flag.StringVar(&comm.Dir, "d", dir, "数据目录")
+	flag.StringVar(&comm.Host, "h", ":8030", "绑定地址")
+	flag.Parse()
 	comm.Gin = gin.Default()
-	if len(os.Args) > 1 && os.Args[1] == "tests" {
-		comm.Dir = "."
-	}
-	//comm.Gin.StaticFS("/css", http.Dir(comm.Dir+"/ui/css"))
-	//comm.Gin.StaticFS("/js", http.Dir(comm.Dir+"/ui/js"))
-	//comm.Gin.StaticFS("/img", http.Dir(comm.Dir+"/ui/img"))
-	//comm.Gin.StaticFS("/fonts", http.Dir(comm.Dir+"/ui/fonts"))
-	//comm.Gin.StaticFile("/", comm.Dir+"/ui/index.html")
-	//comm.Gin.StaticFile("/index.html", comm.Dir+"/ui/index.html")
-	//comm.Gin.StaticFile("/favicon.ico", comm.Dir+"/ui/favicon.ico")
-	/*comm.Gin.FuncMap = template.FuncMap{
-		"AppName": func() string {
-			return "mine app"
-		},
-	}
-	comm.Gin.LoadHTMLGlob("view/*")*/
-	//comm.FileView=true
-	/*comm.Gin.SetHTMLTemplate(utils.HtmlSource)
-	err := utils.InitHtmls()
-	if err != nil {
-		println("InitHtmls err:" + err.Error())
-		return
-	}*/
 }
 func main() {
 	err := comm.InitDb()
@@ -68,7 +48,7 @@ func main() {
 	core.JwtKey = jkey
 	route.Init()
 	mgr.ExecMgr.Start()
-	err = comm.Gin.Run(":8030")
+	err = comm.Gin.Run(comm.Host)
 	if err != nil {
 		println("gin run err:" + err.Error())
 	}
