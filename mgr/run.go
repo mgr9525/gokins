@@ -146,6 +146,7 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rterr error) {
 		println("cmd.run err:" + err.Error())
 		rn.State = 2
 	}
+	println(fmt.Sprintf("cmdRun(%s)dir:%s", pgn.Title, cmd.Dir))
 	if cmd.ProcessState != nil {
 		rn.Excode = cmd.ProcessState.ExitCode()
 	}
