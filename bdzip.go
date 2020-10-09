@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	bts, _ := ioutil.ReadFile("uis/vue-admin/dist/1.zip")
+	bts, _ := ioutil.ReadFile("uis/vue-admin/dist/dist.zip")
 	cont := base64.StdEncoding.EncodeToString(bts)
 	ioutil.WriteFile("bin/zip.txt", []byte(cont), 0644)
 }

@@ -121,7 +121,7 @@ import ModelForm from './ModelForm'
 			},handleRun(et){
 				this.$post('/model/run',{id:et.Id}).then(res=>{
 					//this.$message('操作成功');
-					this.$router.push('/models/info?id='+res.data);
+					this.$router.push('/models/plug/runs?id='+res.data);
 				}).catch(err=>{
 					this.$message({
 						message: err.response?err.response.data||'服务器错误':'网络错误',
