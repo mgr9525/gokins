@@ -97,6 +97,10 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 		return
 	}
 	e := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
+	if e == nil {
+		c.String(404, "not found")
+		return
+	}
 	res := ruisUtil.NewMap()
 	res.Set("up", true)
 	res.Set("text", mgr.ExecMgr.TaskRead(mr.Id, e.Id))
