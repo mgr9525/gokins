@@ -8,6 +8,9 @@ import (
 )
 
 func Init() {
+	comm.Gin.GET("/", Statics)
+	comm.Gin.GET("/static/*nm", Statics)
+
 	comm.Gin.Use(core.MidAccessAllow)
 	gpComm := comm.Gin.Group("/comm")
 	gpComm.Any("/info", server.CommInfo)
