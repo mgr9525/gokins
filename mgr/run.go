@@ -82,7 +82,7 @@ func (c *RunTask) run() {
 	for _, v := range c.plugs {
 		select {
 		case <-c.ctx.Done():
-			c.end(-1, "手动停止")
+			c.end(-1, "手动停止11")
 			return
 		default:
 			err := c.runs(v)
