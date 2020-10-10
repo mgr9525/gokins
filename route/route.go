@@ -16,8 +16,9 @@ func Init() {
 	gpComm.Any("/info", server.CommInfo)
 	gpLogin := comm.Gin.Group("/lg")
 	gpLogin.Any("/info", server.LoginInfo)
-	gpLogin.Any("/login", server.Login)
-	gpLogin.Any("/install", server.Install)
+	gpLogin.Any("/login", core.GinHandler(server.Login))
+	gpLogin.Any("/install", core.GinHandler(server.Install))
+	gpLogin.Any("/uppass", core.GinHandler(server.Uppass))
 
 	gpModel := comm.Gin.Group("/model")
 	gpModel.Use(utilService.MidNeedLogin)

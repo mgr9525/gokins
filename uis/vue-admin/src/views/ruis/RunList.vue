@@ -4,20 +4,15 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 			<el-form :inline="true">
 				<el-form-item>
-					<el-button type="primary" @click="handleRun">运行</el-button>
-				</el-form-item>
-				<el-form-item>
+					<el-button type="warning" @click="$router.back(-1)">返回</el-button>
+					<el-button type="success" @click="handleRun">运行</el-button>
 					<el-button type="primary" v-on:click="getList">刷新</el-button>
-				</el-form-item>
-				<el-form-item>
-					<el-button type="primary" v-on:click="$refs.editor.show(md)">编辑</el-button>
-				</el-form-item>
-				<el-form-item>
+					<el-button type="info" v-on:click="$refs.editor.show(md)">编辑</el-button>
 					<el-button type="primary" v-on:click="$router.push('/models/info?id='+md.Id)">插件列表</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
-		<el-card class="box-card">
+		<el-card class="box-card" style="margin-bottom:20px">
 		<el-row class="text item infoItem">
 			<el-col :span="10">任务名称：{{md.Title}}</el-col>
 			<el-col :span="6">创建时间：{{md.Times}}</el-col>

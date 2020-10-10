@@ -36,13 +36,15 @@
 			</el-table-column>
 			<el-table-column label="操作" width="300">
 				<template slot-scope="{row}">
+					<el-button-group>
 					<el-button size="small" type="primary" @click="handleRun(row)">运行</el-button>
 					<el-button size="small" type="info" @click="handleCopy(row)">复制</el-button>
-					<el-button size="small" @click="$refs.editor.show(row)">编辑</el-button>
+					<el-button size="small" type="warning" @click="$refs.editor.show(row)">编辑</el-button>
 					<!-- <el-button size="small" @click="$router.push({path:'/models/info?id='+row.Id})">插件</el-button> -->
               <el-popconfirm title="确定要删除吗？" @onConfirm="handleDel(row)">
-					<el-button type="danger" size="small" slot="reference">删除</el-button>
+					<el-button size="small" type="danger" slot="reference">删除</el-button>
               </el-popconfirm>
+					</el-button-group>
 				</template>
 			</el-table-column>
 		</el-table>

@@ -27,14 +27,9 @@ func LoginInfo(c *gin.Context) {
 	c.JSON(200, rets)
 }
 
-func Login(c *gin.Context) {
-	pars, err := core.BindMapJSON(c)
-	if err != nil {
-		c.String(500, "bind err:"+err.Error())
-		return
-	}
-	name := pars.GetString("name")
-	pass := pars.GetString("pass")
+func Login(c *gin.Context, req *ruisUtil.Map) {
+	name := req.GetString("name")
+	pass := req.GetString("pass")
 	if name == "" || pass == "" {
 		c.String(500, "param err!")
 		return
@@ -59,13 +54,8 @@ func Login(c *gin.Context) {
 
 	c.String(200, tks)
 }
-func Install(c *gin.Context) {
-	pars, err := core.BindMapJSON(c)
-	if err != nil {
-		c.String(500, "bind err:"+err.Error())
-		return
-	}
-	pass := pars.GetString("newpass")
+func Install(c *gin.Context, req *ruisUtil.Map) {
+	pass := req.GetString("newpass")
 	if pass == "" {
 		c.String(500, "param err!")
 		return
@@ -80,7 +70,7 @@ func Install(c *gin.Context) {
 		return
 	}
 	usr.Pass = ruisUtil.Md5String(pass)
-	_, err = comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+	_, err := comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
 	if err != nil {
 		c.String(511, "服务错误!")
 		return
@@ -95,4 +85,30 @@ func Install(c *gin.Context) {
 	}
 
 	c.String(200, tks)
+}
+
+func Uppass(c *gin.Context, req *ruisUtil.Map) {
+	pass := req.GetString("pass")
+	newpass := req.GetString("newpass")
+	if pass == "" || newpass == "" {
+		c.String(500, "param err!")
+		return
+	}
+	usr := dbService.FindUser("admin")
+	if usr == nil {
+		c.String(511, "未找到用户!")
+		return
+	}
+	if usr.Pass != ruisUtil.Md5String(pass) {
+		c.String(512, "旧密码错误!")
+		return
+	}
+	usr.Pass = ruisUtil.Md5String(newpass)
+	_, err := comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+	if err != nil {
+		c.String(511, "服务错误!")
+		return
+	}
+
+	c.String(200, "ok")
 }

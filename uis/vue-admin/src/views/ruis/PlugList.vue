@@ -6,12 +6,26 @@
 				<el-form-item>
 					<el-button type="warning" @click="$router.back(-1)">返回</el-button>
 					<el-button type="primary" v-on:click="getList">刷新</el-button>
-				</el-form-item>
-				<el-form-item>
 					<el-button type="primary" @click="$refs.editor.show(tid)">新增</el-button>
 				</el-form-item>
 			</el-form>
 		</el-col>
+		<el-card class="box-card" style="margin-bottom:20px">
+		<el-row class="text item infoItem">
+			<el-col :span="10">任务名称：{{md.Title}}</el-col>
+			<el-col :span="6">创建时间：{{md.Times}}</el-col>
+		</el-row>
+		<el-row class="text item infoItem">
+			<el-col :span="12">任务描述：{{md.Desc}}</el-col>
+		</el-row>
+		<el-row class="text item infoItem">
+			<el-col :span="10">运行目录：{{md.Wrkdir}}</el-col>
+			<el-col :span="6">创建或清空运行目录：{{md.Clrdir==1?'是':'否'}}</el-col>
+		</el-row>
+		<el-row class="text item infoItem">
+			<el-col :span="12">环境变量：<p v-text="md.Envs"></p></el-col>
+		</el-row>
+		</el-card>
 
 		<!--列表-->
 		<el-table :data="listdata" highlight-current-row v-loading="loading" @selection-change="selsChange" style="width: 100%;">
@@ -33,10 +47,12 @@
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="{row}">
-					<el-button size="small" @click="$refs.editor.show(tid,row)">编辑</el-button>
+					<el-button-group>
+					<el-button size="small" type="warning" @click="$refs.editor.show(tid,row)">编辑</el-button>
               <el-popconfirm title="确定要删除吗？" @onConfirm="handleDel(row)">
-					<el-button type="danger" size="small" slot="reference">删除</el-button>
+					<el-button size="small" type="danger" slot="reference">删除</el-button>
               </el-popconfirm>
+					</el-button-group>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -63,6 +79,8 @@ import PlugForm from './PlugForm'
 				limit:0,
 				listdata: [],
 				sels: [],//列表选中列
+
+				md:{}
 			}
 		},
 		mounted() {
@@ -71,9 +89,15 @@ import PlugForm from './PlugForm'
               this.$router.push({ path: '/' });
 				return
 			}
+			this.getInfo();
 			this.getList();
 		},
 		methods: {
+			getInfo(){
+				this.$post('/model/get',{id:this.tid}).then(res=>{
+					this.md=res.data;
+				})
+			},
 			//获取列表
 			getList() {
 				this.loading = true;

@@ -5,13 +5,29 @@
 					<el-button type="warning" @click="$router.back(-1)">返回</el-button>
 					<el-button type="primary" @click="getList">刷新</el-button>
 		</el-col>
+		<el-card class="box-card" style="margin-bottom:20px">
+		<el-row class="text item infoItem">
+			<el-col :span="10">任务名称：{{md.Title}}</el-col>
+			<el-col :span="6">创建时间：{{md.Times}}</el-col>
+		</el-row>
+		<el-row class="text item infoItem">
+			<el-col :span="12">任务描述：{{md.Desc}}</el-col>
+		</el-row>
+		<el-row class="text item infoItem">
+			<el-col :span="10">运行目录：{{md.Wrkdir}}</el-col>
+			<el-col :span="6">创建或清空运行目录：{{md.Clrdir==1?'是':'否'}}</el-col>
+		</el-row>
+		<el-row class="text item infoItem">
+			<el-col :span="12">环境变量：<p v-text="md.Envs"></p></el-col>
+		</el-row>
+		</el-card>
 
 		<div class="mains">
 			<div style="width:400px;margin-right:10px">
 				<el-card class="box-card runs" :shadow="mpdata[it.Id]&&mpdata[it.Id].selected?'always':'hover'"
 				:class="mpdata[it.Id]&&mpdata[it.Id].selected?'runselect':''"
-				v-for="(it,idx) in listdata" :key="'run'+it.Id">
-					<div class="runrow" @click="showLog(idx)">
+				v-for="(it,idx) in listdata" :key="'run'+it.Id" @click.native="showLog(idx)">
+					<div class="runrow">
 					<div style="flex:1">{{idx+1}}. {{it.Title}}
 						<br/><span style="color:#909399">{{it.Hstm}}s</span>
 					</div>
@@ -51,7 +67,9 @@
 
 				selid:0,
 				mpdata:{},
-				logs:{}
+				logs:{},
+
+				md:{}
 			}
 		},
 		mounted() {
@@ -67,6 +85,11 @@
 			window.plugTimer=null;
 		},
 		methods: {
+			getInfo(tid){
+				this.$post('/model/get',{id:tid}).then(res=>{
+					this.md=res.data;
+				})
+			},
 			//获取列表
 			getList() {
 				this.loading = true;
@@ -79,6 +102,7 @@
 						clearInterval(window.plugTimer);
 						window.plugTimer=null;
 					}
+					this.getInfo(res.data.tid);
 				}).catch(err=>{
 					this.loading = false;
 					this.$message({
