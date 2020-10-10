@@ -1,9 +1,5 @@
 
-<img src="static/gokins.png" width="50%" syt height="50%" />
-
-<img src="static/dog.png" width="30%" syt height="30%" />
-
-<img src="static/more.png" width="30%" syt height="30%" />
+<img src="static/logo.jpg" width="50%" syt height="50%" />
 
 # Goinks: *Fast*  *Simple* and *Small*  Continuous integration tools
 
