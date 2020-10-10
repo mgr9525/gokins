@@ -10,8 +10,8 @@
 			<div style="width:400px;margin-right:10px">
 				<el-card class="box-card runs" :shadow="mpdata[it.Id]&&mpdata[it.Id].selected?'always':'hover'"
 				:class="mpdata[it.Id]&&mpdata[it.Id].selected?'runselect':''"
-				v-for="(it,idx) in listdata" :key="'run'+it.Id">
-					<div class="runrow" @click="showLog(idx)">
+				v-for="(it,idx) in listdata" :key="'run'+it.Id" @click.native="showLog(idx)">
+					<div class="runrow">
 					<div style="flex:1">{{idx+1}}. {{it.Title}}
 						<br/><span style="color:#909399">{{it.Hstm}}s</span>
 					</div>

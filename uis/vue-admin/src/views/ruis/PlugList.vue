@@ -6,8 +6,6 @@
 				<el-form-item>
 					<el-button type="warning" @click="$router.back(-1)">返回</el-button>
 					<el-button type="primary" v-on:click="getList">刷新</el-button>
-				</el-form-item>
-				<el-form-item>
 					<el-button type="primary" @click="$refs.editor.show(tid)">新增</el-button>
 				</el-form-item>
 			</el-form>
@@ -33,10 +31,12 @@
 			</el-table-column>
 			<el-table-column label="操作" width="150">
 				<template slot-scope="{row}">
-					<el-button size="small" @click="$refs.editor.show(tid,row)">编辑</el-button>
+					<el-button-group>
+					<el-button size="small" type="warning" @click="$refs.editor.show(tid,row)">编辑</el-button>
               <el-popconfirm title="确定要删除吗？" @onConfirm="handleDel(row)">
-					<el-button type="danger" size="small" slot="reference">删除</el-button>
+					<el-button size="small" type="danger" slot="reference">删除</el-button>
               </el-popconfirm>
+					</el-button-group>
 				</template>
 			</el-table-column>
 		</el-table>
