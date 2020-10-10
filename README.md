@@ -40,6 +40,10 @@ It is super easy to get started with your first project.
 ```sh
 ./gokins-unix-mac64
 ``` 
+#### Step 3: 查看服务
+
+访问 `http://localhost:8030`
+
 ## 更多
 
 ### 帮助
