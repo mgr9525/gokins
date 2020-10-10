@@ -1,5 +1,4 @@
-
-<img src="static/logo.jpg" width="50%"  height="50%" style="align-items: center"/>
+<p align="center"><img src="static/logo.jpg" width="50%"  height="50%"></p>
 
 # Goinks: *Fast*  *Simple* and *Small*  Continuous integration tools
 
