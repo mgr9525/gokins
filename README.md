@@ -1,4 +1,4 @@
-<p align="center"><img src="static/logo.png" alt="Gokins" height="100px"></p>
+<p align="center"><img src="static/logo.jpg" alt="Gokins" height="100px"></p>
 
 <div align="center">
   <a href="https://github.com/mgr9525/gokins/releases">
