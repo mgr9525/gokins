@@ -40,7 +40,13 @@ It is super easy to get started with your first project.
 ```sh
 ./gokins-unix-mac64
 ``` 
+## 更多
 
+### 帮助
+
+```sh
+./gokins -h
+``` 
 
 ## Contact
 
@@ -54,6 +60,7 @@ It is super easy to get started with your first project.
 
 
 ## Who is using
-![一点通教学网](http://1ydts.com/image/biaotou.jpg)
+[![一点通教学网](http://1ydts.com/image/biaotou.jpg"title")](http://1ydts.com)
+
 
 
