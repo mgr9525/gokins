@@ -616,14 +616,7 @@ Thanks for [JetBrains](https://www.jetbrains.com/?from=annie) for the wonderful 
 
 ## Authors
 
-Code with ❤️ by [iawia002](https://github.com/iawia002) and lovely [contributors](https://github.com/iawia002/annie/graphs/contributors)
-
-
-## Similar projects
-
-* [youtube-dl](https://github.com/rg3/youtube-dl)
-* [you-get](https://github.com/soimort/you-get)
-* [ytdl](https://github.com/rylio/ytdl)
+[mgr9525](https://github.com/mgr9525) 
 
 
 ## License
