@@ -12,7 +12,7 @@
 				</el-form-item>
 			</el-form>
 		</el-col>
-		<el-card class="box-card">
+		<el-card class="box-card" style="margin-bottom:20px">
 		<el-row class="text item infoItem">
 			<el-col :span="10">任务名称：{{md.Title}}</el-col>
 			<el-col :span="6">创建时间：{{md.Times}}</el-col>
