@@ -32,7 +32,7 @@ func init() {
 	println("dir:" + dir)
 	flag.StringVar(&comm.Dir, "d", dir, "数据目录")
 	flag.StringVar(&comm.Host, "bind", ":8030", "绑定地址")
-	flag.StringVar(&clearPass, "clp", "", "清除用户密码")
+	flag.StringVar(&clearPass, "clp", "", "清除用户密码（请先关闭服务在执行）")
 	flag.Parse()
 	comm.Gin = gin.Default()
 }
