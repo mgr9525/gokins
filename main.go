@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"gokins/comm"
 	"gokins/core"
 	"gokins/mgr"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
+
+var clearPass = ""
 
 func init() {
 	path, err := os.Executable()
@@ -29,6 +32,7 @@ func init() {
 	println("dir:" + dir)
 	flag.StringVar(&comm.Dir, "d", dir, "数据目录")
 	flag.StringVar(&comm.Host, "bind", ":8030", "绑定地址")
+	flag.StringVar(&clearPass, "clp", "", "清除用户密码（请先关闭服务在执行）")
 	flag.Parse()
 	comm.Gin = gin.Default()
 }
@@ -36,6 +40,9 @@ func main() {
 	err := comm.InitDb()
 	if err != nil {
 		println("InitDb err:" + err.Error())
+		return
+	}
+	if clearUPass() {
 		return
 	}
 	jwtKey := dbService.GetParam("jwt-key")
@@ -53,4 +60,23 @@ func main() {
 		println("gin run err:" + err.Error())
 	}
 	mgr.Cancel()
+}
+
+func clearUPass() bool {
+	if clearPass != "" {
+		usr := dbService.FindUserName(clearPass)
+		if usr == nil {
+			fmt.Printf("user(%s) not found\n", clearPass)
+		} else {
+			usr.Pass = ""
+			_, err := comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+			if err != nil {
+				fmt.Println("clear password err:" + err.Error())
+			} else {
+				fmt.Println("clear password ok")
+			}
+		}
+		return true
+	}
+	return false
 }
