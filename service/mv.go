@@ -17,6 +17,10 @@ func MoveModels() {
 		return
 	}
 	for _, v := range olds {
+		id, err := v.GetInt("id")
+		if err != nil {
+			continue
+		}
 		del, err := v.GetInt("del")
 		if err != nil {
 			continue
@@ -38,14 +42,14 @@ func MoveModels() {
 		}
 		_, err = comm.Db.Insert(ne)
 		if err == nil {
-			mvPlugin(ne)
+			mvPlugin(id, ne)
 		}
 	}
 }
 
-func mvPlugin(md *model.TModel) {
+func mvPlugin(tid int64, md *model.TModel) {
 	var olds []*ruisUtil.Map
-	err := comm.Dbold.SQL("select * from t_plugin").Find(&olds)
+	err := comm.Dbold.SQL("select * from t_plugin where tid=?", tid).Find(&olds)
 	if err != nil {
 		fmt.Println("find model err:" + err.Error())
 		return
