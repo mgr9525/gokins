@@ -2,11 +2,11 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"gokins/comm"
 	"gokins/core"
 	"gokins/mgr"
 	"gokins/route"
+	"gokins/service"
 	"gokins/service/dbService"
 	"os"
 	"path/filepath"
@@ -14,7 +14,10 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var clearPass = ""
+var (
+	clearPass = ""
+	mvData    = ""
+)
 
 func init() {
 	path, err := os.Executable()
@@ -32,7 +35,9 @@ func init() {
 	println("dir:" + dir)
 	flag.StringVar(&comm.Dir, "d", dir, "数据目录")
 	flag.StringVar(&comm.Host, "bind", ":8030", "绑定地址")
-	flag.StringVar(&clearPass, "clp", "", "清除用户密码（请先关闭服务在执行）")
+	flag.IntVar(&comm.RunTaskLen, "rln", 5, "同时执行的流水线数量（默认5）")
+	flag.StringVar(&clearPass, "clp", "", "清除某个用户密码（请先关闭服务在执行）")
+	flag.StringVar(&mvData, "mvdata", "", "转移某个库数据到本地（目前转移的数据：流水线、流水线插件）")
 	flag.Parse()
 	comm.Gin = gin.Default()
 }
@@ -42,9 +47,18 @@ func main() {
 		println("InitDb err:" + err.Error())
 		return
 	}
-	if clearUPass() {
+	if clearPass != "" {
+		service.ClearUPass(clearPass)
 		return
 	}
+	if mvData != "" {
+		service.MoveData(mvData)
+		return
+	}
+
+	runWeb()
+}
+func runWeb() {
 	jwtKey := dbService.GetParam("jwt-key")
 	jkey := jwtKey.GetString("key")
 	if jkey == "" {
@@ -55,28 +69,9 @@ func main() {
 	core.JwtKey = jkey
 	route.Init()
 	mgr.ExecMgr.Start()
-	err = comm.Gin.Run(comm.Host)
+	err := comm.Gin.Run(comm.Host)
 	if err != nil {
 		println("gin run err:" + err.Error())
 	}
 	mgr.Cancel()
-}
-
-func clearUPass() bool {
-	if clearPass != "" {
-		usr := dbService.FindUserName(clearPass)
-		if usr == nil {
-			fmt.Printf("user(%s) not found\n", clearPass)
-		} else {
-			usr.Pass = ""
-			_, err := comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
-			if err != nil {
-				fmt.Println("clear password err:" + err.Error())
-			} else {
-				fmt.Println("clear password ok")
-			}
-		}
-		return true
-	}
-	return false
 }
