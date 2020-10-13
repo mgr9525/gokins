@@ -60,7 +60,6 @@ func MoveData(pth string) {
 		fmt.Println("old db path err:" + err.Error())
 		return
 	}
-	comm.Dbold = db
-
+	dbold = db
 	MoveModels()
 }
