@@ -12,5 +12,7 @@ var (
 	Gin  *gin.Engine
 	Db   *xorm.Engine
 
+	Dbold *xorm.Engine
+
 	RunTaskLen int = 5
 )

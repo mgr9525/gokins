@@ -43,7 +43,9 @@
 			</div>
 			<div style="flex:1;white-space: break-spaces;word-break: break-all;">
 				<el-card class="box-card">
-				<div style="" v-text="logs[selid]&&logs[selid].text"></div>
+				<div>
+					<pre style="white-space: pre-line;">{{logs[selid]&&logs[selid].text}}</pre>
+				</div>
 				</el-card>
 			</div>
 		</div>
