@@ -12,6 +12,8 @@ import (
 	"path/filepath"
 
 	"github.com/gin-gonic/gin"
+
+	_ "time/tzdata"
 )
 
 var (
