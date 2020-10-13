@@ -6,12 +6,16 @@ import (
 	"gokins/model"
 	"time"
 
+	"github.com/go-xorm/xorm"
+
 	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
+var dbold *xorm.Engine
+
 func MoveModels() {
 	var olds []*ruisUtil.Map
-	err := comm.Dbold.SQL("select * from t_model").Find(&olds)
+	err := dbold.SQL("select * from t_model").Find(&olds)
 	if err != nil {
 		fmt.Println("find model err:" + err.Error())
 		return
@@ -49,7 +53,7 @@ func MoveModels() {
 
 func mvPlugin(tid int64, md *model.TModel) {
 	var olds []*ruisUtil.Map
-	err := comm.Dbold.SQL("select * from t_plugin where tid=?", tid).Find(&olds)
+	err := dbold.SQL("select * from t_plugin where tid=?", tid).Find(&olds)
 	if err != nil {
 		fmt.Println("find model err:" + err.Error())
 		return
