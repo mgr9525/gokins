@@ -1,1 +1,1 @@
-go build -o bin/gokins main.go
+go build -o bin/gokins.exe main.go
