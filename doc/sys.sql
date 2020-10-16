@@ -244,4 +244,21 @@ ON "t_output" (
 -- Auto increment value for t_plugin_run
 -- ----------------------------
 
+
+-- ----------------------------
+-- Table structure for t_trigger
+-- ----------------------------
+DROP TABLE IF EXISTS "t_trigger";
+CREATE TABLE "t_trigger" (
+  "id" INTEGER NOT NULL,
+  "types" INTEGER,
+  "name" TEXT,
+  "desc" TEXT,
+  "times" DATE,
+  "config" TEXT,
+  "del" integer DEFAULT 0,
+  PRIMARY KEY ("id")
+);
+
+
 PRAGMA foreign_keys = true;
