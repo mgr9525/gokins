@@ -2,7 +2,7 @@ FROM golang:1.15.2-alpine AS builder
 
 RUN apk add git gcc libc-dev && git clone https://github.com/mgr9525/gokins.git /build
 WORKDIR /build
-RUN goos=linux GOARCH=amd64 go build -o bin/gokins main.go
+RUN GOOS=linux GOARCH=amd64 go build -o bin/gokins main.go
 
 
 FROM alpine:latest AS final
