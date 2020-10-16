@@ -28,21 +28,27 @@ func ModelGet(c *gin.Context, req *ruisUtil.Map) {
 	}
 	c.JSON(200, m)
 }
+
 func ModelList(c *gin.Context, req *ruisUtil.Map) {
 	pg, _ := req.GetInt("page")
+	size, _ := req.GetInt("size")
 	q := req.GetString("q")
 	ls := make([]*model.TModel, 0)
 	ses := comm.Db.Where("del!='1'")
+	if size <= 0 {
+		size = 20
+	}
 	if q != "" {
 		ses.And("title like ?", "%"+q+"%")
 	}
-	page, err := core.XormFindPage(ses, &ls, pg, 20)
+	page, err := core.XormFindPage(ses, &ls, pg, size)
 	if err != nil {
 		c.String(500, "find err:"+err.Error())
 		return
 	}
 	c.JSON(200, page)
 }
+
 func ModelEdit(c *gin.Context, req *models.Model) {
 	if req.Title == "" {
 		c.String(500, "param err")
