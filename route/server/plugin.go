@@ -9,7 +9,6 @@ import (
 	"gokins/models"
 	"gokins/service/dbService"
 	"io/ioutil"
-	"strconv"
 	"time"
 )
 
@@ -83,29 +82,35 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	res.Set("list", ls)
 	res.Set("tid", mr.Tid)
 	res.Set("end", mr.State >= 2)
-	plugLog(req.GetString("pid"), mr, res)
 	c.JSON(200, res)
 }
-func plugLog(pids string, mr *model.TModelRun, ret *ruisUtil.Map) {
-	pid, err := strconv.ParseInt(pids, 10, 64)
+func PlugLog(c *gin.Context, req *ruisUtil.Map) {
+	tid, err := req.GetInt("tid")
+	if err != nil || tid <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	pid, err := req.GetInt("pid")
 	if err != nil || pid <= 0 {
+		c.String(500, "param err")
+		return
+	}
+	mr := dbService.GetModelRun(int(tid))
+	if mr == nil {
+		c.String(404, "not found")
 		return
 	}
 	rn := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
 	if rn == nil {
 		return
 	}
-	res := ruisUtil.NewMap()
-	res.Set("id", rn.Id)
-	res.Set("up", true)
-	res.Set("text", "")
-	if rn.State >= 2 {
-		res.Set("up", false)
-	}
+	ret := ruisUtil.NewMap()
+	ret.Set("id", rn.Id)
+	ret.Set("text", "")
 	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Mid, rn.Id)
 	outs, err := ioutil.ReadFile(logpth)
 	if err == nil {
-		res.Set("text", string(outs))
+		ret.Set("text", string(outs))
 	}
-	ret.Set("log", res)
+	c.JSON(200, ret)
 }

@@ -64,7 +64,7 @@
 		data() {
 			return {
 				tid:'',
-				running=false,
+				running:false,
 				loading: false,
 				listdata: [],
 
@@ -98,7 +98,7 @@
 			//获取列表
 			getList() {
 				if(!this.running)return;
-				this.$post('/plug/runs',{id:this.tid,pid:this.selid,first:this.running}).then((res) => {
+				this.$post('/plug/runs',{id:this.tid,pid:this.selid,first:this.loading}).then((res) => {
               		console.log(res);
 					this.loading = false;
 					this.getInfo(res.data.tid);
@@ -107,9 +107,7 @@
 						this.running=false;
 					}
 					this.getList();
-					if(res.data.log&&res.data.log.id){
-						this.logs[res.data.log.id]=res.data.log;
-					}
+					this.getLog();
 				}).catch(err=>{
 					this.loading = false;
 					this.$message({
@@ -133,6 +131,13 @@
 				this.selid=e.Id;
 				this.$forceUpdate();
 				console.log('showLog:',this.mpdata[idx]);
+				if(!this.running)this.getLog();
+			},getLog(ls){
+				if(this.selid==''||this.selid<=0)return;
+				this.$post('/plug/log',{tid:this.tid,pid:this.selid}).then(res=>{
+					this.logs[this.selid]=res.data;
+					this.$forceUpdate();
+				})
 			}
 		}
 	}
