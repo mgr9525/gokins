@@ -225,7 +225,7 @@ ON "t_output" (
 -- ----------------------------
 DROP TABLE IF EXISTS "t_trigger";
 CREATE TABLE "t_trigger" (
-  "id" INTEGER NOT NULL,
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "types" INTEGER,
   "name" TEXT,
   "desc" TEXT,
