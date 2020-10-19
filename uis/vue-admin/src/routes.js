@@ -19,10 +19,11 @@ let routes = [
     {
         path: '/',
         component: Home,
-        name: '工作流',
+        name: '工作区',
         iconCls: 'el-icon-message',//图标样式class
         children: [
             { path: '/models', component: require('@/views/ruis/ModelList'), name: '流水线' },
+            { path: '/trigger', component: require('@/views/trigger/TriggerList'), name: '触发器' },
             { path: '/models/info', component: require('@/views/ruis/PlugList'), name: '流水线插件', hidden: true },
             { path: '/models/runs', component: require('@/views/ruis/RunList'), name: '流水线运行', hidden: true },
             { path: '/models/plug/runs', component: require('@/views/ruis/PlugRunList'), name: '流水日志', hidden: true },
