@@ -120,7 +120,7 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 		return rn, nil
 	default:
 	}
-	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Mid, rn.Id)
+	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Tid, rn.Id)
 	if !ruisIo.PathExists(filepath.Dir(logpth)) {
 		err := os.MkdirAll(filepath.Dir(logpth), 0755)
 		if err != nil {

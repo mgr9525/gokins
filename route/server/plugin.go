@@ -97,17 +97,18 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 	}
 	mr := dbService.GetModelRun(int(tid))
 	if mr == nil {
-		c.String(404, "not found")
+		c.String(404, "not found mr")
 		return
 	}
 	rn := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
 	if rn == nil {
+		c.String(404, "not found rn")
 		return
 	}
 	ret := ruisUtil.NewMap()
 	ret.Set("id", rn.Id)
 	ret.Set("text", "")
-	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Mid, rn.Id)
+	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Tid, rn.Id)
 	outs, err := ioutil.ReadFile(logpth)
 	if err == nil {
 		ret.Set("text", string(outs))
