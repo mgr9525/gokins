@@ -31,7 +31,7 @@ const sqls = `
 /*
  Navicat Premium Data Transfer
 
- Source Server         : gokinsdb
+ Source Server         : gokins
  Source Server Type    : SQLite
  Source Server Version : 3030001
  Source Schema         : main
@@ -40,7 +40,7 @@ const sqls = `
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 02/10/2020 22:40:17
+ Date: 20/10/2020 00:17:26
 */
 
 PRAGMA foreign_keys = false;
@@ -59,8 +59,6 @@ CREATE TABLE "sys_param" (
 -- ----------------------------
 -- Records of sys_param
 -- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -83,9 +81,7 @@ CREATE TABLE "sys_user" (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
-BEGIN;
 INSERT INTO "sys_user" VALUES (1, 'admin', 'root', NULL, '超级管理员', NULL, '2020-07-08 07:25:53', NULL, NULL, NULL);
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_model
@@ -106,8 +102,6 @@ CREATE TABLE "t_model" (
 -- ----------------------------
 -- Records of t_model
 -- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_model_run
@@ -126,8 +120,6 @@ CREATE TABLE "t_model_run" (
 -- ----------------------------
 -- Records of t_model_run
 -- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_output
@@ -144,8 +136,6 @@ CREATE TABLE "t_output" (
 -- ----------------------------
 -- Records of t_output
 -- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_plugin
@@ -167,8 +157,6 @@ CREATE TABLE "t_plugin" (
 -- ----------------------------
 -- Records of t_plugin
 -- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_plugin_run
@@ -182,15 +170,12 @@ CREATE TABLE "t_plugin_run" (
   "times" datetime,
   "timesd" datetime,
   "state" integer,
-  "excode" integer,
-  "output" text
+  "excode" integer
 );
 
 -- ----------------------------
 -- Records of t_plugin_run
 -- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Auto increment value for sys_param
@@ -199,7 +184,7 @@ COMMIT;
 -- ----------------------------
 -- Indexes structure for table sys_param
 -- ----------------------------
-CREATE INDEX "main"."key"
+CREATE INDEX "key"
 ON "sys_param" (
   "key" ASC
 );
@@ -207,15 +192,15 @@ ON "sys_param" (
 -- ----------------------------
 -- Indexes structure for table sys_user
 -- ----------------------------
-CREATE INDEX "main"."IDX_sys_user_phone"
+CREATE INDEX "IDX_sys_user_phone"
 ON "sys_user" (
   "phone" ASC
 );
-CREATE INDEX "main"."name"
+CREATE INDEX "name"
 ON "sys_user" (
   "name" ASC
 );
-CREATE INDEX "main"."xid"
+CREATE INDEX "xid"
 ON "sys_user" (
   "xid" ASC
 );
@@ -235,7 +220,7 @@ ON "sys_user" (
 -- ----------------------------
 -- Indexes structure for table t_output
 -- ----------------------------
-CREATE INDEX "main"."kv"
+CREATE INDEX "kv"
 ON "t_output" (
   "type" ASC,
   "tid" ASC

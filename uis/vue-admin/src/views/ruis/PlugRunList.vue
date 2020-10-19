@@ -24,6 +24,21 @@
 
 		<div class="mains">
 			<div style="width:400px;margin-right:10px">
+				<el-card class="box-card runs" style="background:#E0EEEE">
+					<div class="runrow">
+					<div style="flex:1"><span style="color:blue">流水线列表</span>
+						<br/><span style="color:red">{{mrerrs}}</span>
+					</div>
+
+					<div>
+					<el-tag v-if="mrstat==-1" type="danger">停止</el-tag>
+					<el-tag v-if="mrstat==0" type="info">等待</el-tag>
+					<el-tag v-if="mrstat==1" type="warning">运行</el-tag>
+					<el-tag v-if="mrstat==2" type="danger">失败</el-tag>
+					<el-tag v-if="mrstat==4" type="success">成功</el-tag>
+					</div>
+					</div>
+				</el-card>
 				<el-card class="box-card runs" :shadow="mpdata[it.Id]&&mpdata[it.Id].selected?'always':'hover'"
 				:class="mpdata[it.Id]&&mpdata[it.Id].selected?'runselect':''"
 				v-for="(it,idx) in listdata" :key="'run'+it.Id" @click.native="showLog(idx)">
@@ -72,7 +87,9 @@
 				mpdata:{},
 				logs:{},
 
-				md:{}
+				md:{},
+				mrstat:0,
+				mrerrs:''
 			}
 		},
 		mounted() {
@@ -103,6 +120,8 @@
 					this.loading = false;
 					this.getInfo(res.data.tid);
 					this.listdata = res.data.list;
+					this.mrstat=res.data.state;
+					this.mrerrs=res.data.errs;
 					if(res.data.end==true){
 						this.running=false;
 					}
