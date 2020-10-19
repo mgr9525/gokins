@@ -1,7 +1,6 @@
 package mgr
 
 import (
-	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -13,7 +12,6 @@ import (
 	"path/filepath"
 	"runtime"
 	"strings"
-	"sync"
 	"time"
 
 	ruisIo "github.com/mgr9525/go-ruisutil/ruisio"
@@ -27,9 +25,6 @@ type RunTask struct {
 	plugs []*model.TPlugin
 	ctx   context.Context
 	cncl  context.CancelFunc
-	lk    sync.Mutex
-	stds  map[int]*bytes.Buffer
-	//outs  map[int]*string
 }
 
 func (c *RunTask) start() {
@@ -47,8 +42,6 @@ func (c *RunTask) start() {
 func (c *RunTask) run() {
 	defer ruisUtil.Recovers("RunTask start", nil)
 	c.plugs = nil
-	c.stds = make(map[int]*bytes.Buffer)
-	//c.outs = make(map[int]*string)
 	if c.Md.Wrkdir != "" {
 		if ruisIo.PathExists(c.Md.Wrkdir) {
 			if c.Md.Clrdir == 1 {
@@ -85,7 +78,14 @@ func (c *RunTask) run() {
 			c.end(-1, "手动停止")
 			return
 		default:
-			err := c.runs(v)
+			rn, err := c.runs(v)
+			if rn != nil {
+				rn.Timesd = time.Now()
+				_, errs := comm.Db.Cols("state", "excode", "timesd").Where("id=?", rn.Id).Update(rn)
+				if err == nil && errs != nil {
+					err = errs
+				}
+			}
 			if err != nil {
 				println("cmd run err:", err.Error())
 				c.end(2, err.Error())
@@ -97,7 +97,7 @@ func (c *RunTask) run() {
 	c.end(4, "")
 }
 
-func (c *RunTask) runs(pgn *model.TPlugin) (rterr error) {
+func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) {
 	defer ruisUtil.Recovers("RunTask.run", func(errs string) {
 		rterr = errors.New(errs)
 	})
@@ -108,30 +108,43 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rterr error) {
 		rn.State = 1
 		_, err := comm.Db.Insert(rn)
 		if err != nil {
-			return err
+			return nil, err
 		}
-	}
-	if rn.State != 1 {
-		return nil
+	} else if rn.State != 0 {
+		rn.State = 2
+		return rn, errors.New("already run")
 	}
 	select {
 	case <-c.ctx.Done():
-		return nil
+		rn.State = -1
+		return rn, nil
 	default:
 	}
+	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Mid, rn.Id)
+	if !ruisIo.PathExists(filepath.Dir(logpth)) {
+		err := os.MkdirAll(filepath.Dir(logpth), 0755)
+		if err != nil {
+			println("MkdirAll err:" + err.Error())
+			rn.State = 2
+			return rn, err
+		}
+	}
+	logfl, err := os.OpenFile(logpth, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		println("MkdirAll err:" + err.Error())
+		rn.State = 2
+		return rn, err
+	}
+	defer logfl.Close()
 	name := "sh"
 	par0 := "-c"
 	if runtime.GOOS == "windows" {
 		name = "cmd"
 		par0 = "/c"
 	}
-	stdout := &bytes.Buffer{}
-	c.lk.Lock()
-	c.stds[rn.Id] = stdout
-	c.lk.Unlock()
 	cmd := exec.CommandContext(c.ctx, name, par0, pgn.Cont)
-	cmd.Stdout = stdout
-	cmd.Stderr = stdout
+	cmd.Stdout = logfl
+	cmd.Stderr = logfl
 	if c.Md.Envs != "" {
 		str := strings.ReplaceAll(c.Md.Envs, "\t", "")
 		envs := strings.Split(str, "\n")
@@ -140,37 +153,24 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rterr error) {
 	if c.Md.Wrkdir != "" {
 		cmd.Dir = c.Md.Wrkdir
 	}
-	err := cmd.Run()
+	err = cmd.Run()
 	rn.State = 4
 	if err != nil {
 		println("cmd.run err:" + err.Error())
 		rn.State = 2
+		return rn, err
 	}
 	fmt.Println(fmt.Sprintf("cmdRun(%s)dir:%s", pgn.Title, cmd.Dir))
 	if cmd.ProcessState != nil {
 		rn.Excode = cmd.ProcessState.ExitCode()
 	}
-
-	c.lk.Lock()
-	defer c.lk.Unlock()
-	rn.Output = stdout.String()
-	/*if c.outs[rn.Id] == nil {
-		rn.Output = stdout.String()
-	} else {
-		*c.outs[rn.Id] += stdout.String()
-		rn.Output = *c.outs[rn.Id]
-	}*/
-
-	rn.Timesd = time.Now()
-	_, err = comm.Db.Cols("state", "excode", "timesd", "output").Where("id=?", rn.Id).Update(rn)
-	if err != nil {
-		return err
+	if rn.Excode != 0 {
+		rn.State = 2
+		if pgn.Exend == 1 {
+			return rn, fmt.Errorf("程序执行错误：%d", rn.Excode)
+		}
 	}
-	delete(c.stds, rn.Id)
-	if pgn.Exend == 1 && rn.Excode != 0 {
-		return fmt.Errorf("程序执行错误：%d", rn.Excode)
-	}
-	return nil
+	return rn, nil
 }
 func (c *RunTask) end(stat int, errs string) {
 	c.stop()
@@ -189,22 +189,6 @@ func (c *RunTask) stop() {
 		c.cncl()
 		c.cncl = nil
 	}
-}
-
-func (c *RunTask) read(id int) string {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-	if c.stds[id] == nil {
-		return ""
-	}
-	return c.stds[id].String()
-	/*if c.outs[id] == nil {
-		s := ""
-		c.outs[id] = &s
-	}
-	out := c.stds[id].String()
-	*c.outs[id] += out
-	return *c.outs[id]*/
 }
 
 func rmDirFiles(dir string) error {

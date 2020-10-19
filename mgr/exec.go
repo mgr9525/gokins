@@ -85,12 +85,3 @@ func (c *execManager) StopTask(id int) {
 	//_, err := comm.Db.Cols("state").Where("id=?", v.Id).Update(v)
 	//return err
 }
-func (c *execManager) TaskRead(id, pid int) string {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-	e, ok := c.tasks[id]
-	if ok {
-		return e.read(pid)
-	}
-	return ""
-}

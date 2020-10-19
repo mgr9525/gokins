@@ -2,14 +2,15 @@ package server
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
 	"gokins/comm"
-	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/dbService"
-
-	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
+	"io/ioutil"
+	"strconv"
+	"time"
 )
 
 func PlugList(c *gin.Context, req *ruisUtil.Map) {
@@ -52,6 +53,9 @@ func PlugDel(c *gin.Context, req *ruisUtil.Map) {
 	c.String(200, fmt.Sprintf("%d", m.Id))
 }
 func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
+	if req.GetBool("first") == false {
+		time.Sleep(time.Second)
+	}
 	id, err := req.GetInt("id")
 	if err != nil || id <= 0 {
 		c.String(500, "param err")
@@ -79,35 +83,29 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	res.Set("list", ls)
 	res.Set("tid", mr.Tid)
 	res.Set("end", mr.State >= 2)
+	plugLog(req.GetString("pid"), mr, res)
 	c.JSON(200, res)
 }
-func PlugLog(c *gin.Context, req *ruisUtil.Map) {
-	tid, err := req.GetInt("tid")
-	if err != nil || tid <= 0 {
-		c.String(500, "param err")
-		return
-	}
-	pid, err := req.GetInt("pid")
+func plugLog(pids string, mr *model.TModelRun, ret *ruisUtil.Map) {
+	pid, err := strconv.ParseInt(pids, 10, 64)
 	if err != nil || pid <= 0 {
-		c.String(500, "param err")
 		return
 	}
-	mr := dbService.GetModelRun(int(tid))
-	if mr == nil {
-		c.String(404, "not found")
-		return
-	}
-	e := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
-	if e == nil {
-		c.String(404, "not found")
+	rn := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
+	if rn == nil {
 		return
 	}
 	res := ruisUtil.NewMap()
+	res.Set("id", rn.Id)
 	res.Set("up", true)
-	res.Set("text", mgr.ExecMgr.TaskRead(mr.Id, e.Id))
-	if e != nil && e.State >= 2 {
+	res.Set("text", "")
+	if rn.State >= 2 {
 		res.Set("up", false)
-		res.Set("text", e.Output)
 	}
-	c.JSON(200, res)
+	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Mid, rn.Id)
+	outs, err := ioutil.ReadFile(logpth)
+	if err == nil {
+		res.Set("text", string(outs))
+	}
+	ret.Set("log", res)
 }

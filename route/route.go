@@ -37,5 +37,5 @@ func Init() {
 	gpPlug.Any("/edit", core.GinHandler(server.PlugEdit))
 	gpPlug.Any("/del", core.GinHandler(server.PlugDel))
 	gpPlug.Any("/runs", core.GinHandler(server.PlugRuns))
-	gpPlug.Any("/log", core.GinHandler(server.PlugLog))
+	//gpPlug.Any("/log", core.GinHandler(server.PlugLog))
 }
