@@ -37,6 +37,13 @@
 					#{{row.Id}}</el-link>
 				</template>
 			</el-table-column>
+			<el-table-column label="触发" width="110">
+				<template slot-scope="{row}">
+					<el-tag v-if="row.Tgtyp=='git'">git触发</el-tag>
+					<el-tag v-else-if="row.Tgtyp=='timer'">定时器触发</el-tag>
+					<el-tag v-else>手动执行</el-tag>
+				</template>
+			</el-table-column>
 			<el-table-column prop="Times1" label="运行时间" width="200" sortable>
 			</el-table-column>
 			<el-table-column prop="Times2" label="结束时间" width="200" sortable>

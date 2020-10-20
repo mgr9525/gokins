@@ -28,6 +28,9 @@ func ClearUPass(nm string) {
 	}
 }
 
+func Upgrade() {
+	MoveData(comm.Dir + "/db.bak")
+}
 func MoveData(pth string) {
 	if pth == "" {
 		return
@@ -62,4 +65,5 @@ func MoveData(pth string) {
 	}
 	dbold = db
 	MoveModels()
+	MoveTrigger()
 }
