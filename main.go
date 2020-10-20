@@ -48,10 +48,12 @@ func init() {
 func main() {
 	if upgrade {
 		os.RemoveAll(comm.Dir + "/data")
-		if ruisIo.PathExists(comm.Dir + "/db.dat") {
-			os.Remove(comm.Dir + "/db.bak")
-			os.Rename(comm.Dir+"/db.dat", comm.Dir+"/db.bak")
+		if !ruisIo.PathExists(comm.Dir + "/db.dat") {
+			println("未找到原有数据库")
+			return
 		}
+		os.Remove(comm.Dir + "/db.bak")
+		os.Rename(comm.Dir+"/db.dat", comm.Dir+"/db.bak")
 	}
 	if !ruisIo.PathExists(comm.Dir + "/data") {
 		err := os.MkdirAll(comm.Dir+"/data", 0755)
