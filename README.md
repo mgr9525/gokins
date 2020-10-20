@@ -9,7 +9,7 @@
 
 ## What does it do
 
-Gokins是一个款轻量级、能够持续集成和持续交付的工具
+Gokins是一个由Go语言和Vue编写的款轻量级、能够持续集成和持续交付的工具
 
 
 * **持续集成和持续交付** 
@@ -29,6 +29,7 @@ Gokins是一个款轻量级、能够持续集成和持续交付的工具
     绝不收集任何用户、服务器信息，是一个独立安全的服务
 
 ## Quick Start
+
 It is super easy to get started with your first project.
 
 #### Step 1: 下载
@@ -45,14 +46,15 @@ It is super easy to get started with your first project.
 访问 `http://localhost:8030`
 
 
-
 ### 使用gokins
 
 
 #### 下载运行
-- 项目地址 ： https://github.com/mgr9525/gokins
-- 可以选择到Gokins的github主页下载对应平台的执行文件
-- [下载最新版本](https://github.com/mgr9525/gokins/releases)
+
+- github地址 ： https://github.com/mgr9525/gokins
+- gitee地址 ： https://gitee.com/mgr9525/gokins
+
+可在对应平台需找发行版
 
 - 或者直接在服务器上执行以下命令
 
@@ -181,6 +183,14 @@ Gokins目前还处于需要不断进步的阶段，如果你有兴趣假如我�
 ./gokins -h
 ``` 
 
+### 升级
+
+升级数据库、添加触发器功能，针对于于之前使用过Gokins的用户
+
+```
+./gokins -up
+``` 
+
 ## Contact
 
 * Join us from QQ(Group : 975316343). 
@@ -201,6 +211,7 @@ Gokins目前还处于需要不断进步的阶段，如果你有兴趣假如我�
 - 新增功能 ：
  1. 新增触发器（加入流水线日志触发方式）
  2. 实现触发器manager，task
+ 3. 新增升级功能 `./gokins -up`（升级数据库、添加触发器功能，针对于于之前使用过Gokins的用户）
 
 - bug fix ：
  1. 前端循环请求卡死问题
