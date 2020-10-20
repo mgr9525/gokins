@@ -39,7 +39,7 @@ It is super easy to get started with your first project.
 #### Step 2: 启动服务
 
 ```
-./gokins-unix-mac64
+./gokins
 ``` 
 #### Step 3: 查看服务
 
@@ -61,7 +61,7 @@ It is super easy to get started with your first project.
 ```
 
 //获取可执行文件
-wget -c  https://github.com/mgr9525/gokins/releases/download/v0.1.0/gokins-linux-amd64
+wget -c  https://github.com/mgr9525/gokins/releases/download/v0.1.2/gokins-linux-amd64
 
 //授权
 chmod +x gokins-linux-amd64
