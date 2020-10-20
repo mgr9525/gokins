@@ -16,6 +16,7 @@
 				</el-form-item>
 				<el-form-item label="环境变量">
 					<el-input type="textarea" v-model="formData.Envs" auto-complete="off" :rows="8" placeholder="每行一个变量,格式：name=xxxx"></el-input>
+                    <el-tag type="info">注意：<span style="color:red">PATH</span>变量如果不填为gokins默认，如果填了请使用$PATH获取默认变量，例如：PATH=/home/bin:$PATH</el-tag>
 				</el-form-item>
 			</el-form>
 		</el-col>

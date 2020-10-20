@@ -1,6 +1,7 @@
 <template>
-<div>
-  <el-form v-if="needInstall" :model="form1" :rules="rules1" ref="form1" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+  <div style="text-align: center;">
+    <img src="static/logo.jpg" style="width: 30%;height: 30%; margin-bottom: 0">
+    <el-form v-if="needInstall" :model="form1" :rules="rules1" ref="form1" label-position="left" label-width="0px" class="demo-ruleForm login-container">
     <h3 class="title">系统安装</h3>
     <el-form-item prop="account">
       设置管理员密码：root
@@ -13,8 +14,8 @@
       <!--<el-button @click.native.prevent="handleReset2">重置</el-button>-->
     </el-form-item>
   </el-form>
-  <el-form v-else :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
-    <h3 class="title">系统登录</h3>
+    <el-form v-else :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-position="left" label-width="0px" class="demo-ruleForm login-container">
+    <h3 class="title">欢迎来到Gokins</h3>
     <el-form-item prop="account">
       <el-input type="text" v-model="ruleForm2.account" auto-complete="off" placeholder="账号"></el-input>
     </el-form-item>
@@ -135,14 +136,14 @@
     border-radius: 5px;
     -moz-border-radius: 5px;
     background-clip: padding-box;
-    margin: 180px auto;
+    margin: 10px auto;
     width: 350px;
     padding: 35px 35px 15px 35px;
     background: #fff;
     border: 1px solid #eaeaea;
     box-shadow: 0 0 25px #cac6c6;
     .title {
-      margin: 0px auto 40px auto;
+      margin: 0px auto 10px auto;
       text-align: center;
       color: #505458;
     }

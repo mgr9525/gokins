@@ -11,12 +11,15 @@ import (
 	"os"
 	"path/filepath"
 
+	ruisIo "github.com/mgr9525/go-ruisutil/ruisio"
+
 	"github.com/gin-gonic/gin"
 )
 
 var (
 	clearPass = ""
 	mvData    = ""
+	upgrade   = false
 )
 
 func init() {
@@ -37,11 +40,26 @@ func init() {
 	flag.StringVar(&comm.Host, "bind", ":8030", "绑定地址")
 	flag.IntVar(&comm.RunTaskLen, "rln", 5, "同时执行的流水线数量")
 	flag.StringVar(&clearPass, "clp", "", "清除某个用户密码（请先关闭服务在执行）")
-	flag.StringVar(&mvData, "mvdata", "", "转移某个库数据到本地（目前转移的数据：流水线、流水线插件）")
+	flag.StringVar(&mvData, "mvdata", "", "转移某个库数据到本地（目前不转移运行日志记录）")
+	flag.BoolVar(&upgrade, "up", false, "升级数据库（迁移流水线，触发器）")
 	flag.Parse()
 	comm.Gin = gin.Default()
 }
 func main() {
+	if upgrade {
+		os.RemoveAll(comm.Dir + "/data")
+		if ruisIo.PathExists(comm.Dir + "/db.dat") {
+			os.Remove(comm.Dir + "/db.bak")
+			os.Rename(comm.Dir+"/db.dat", comm.Dir+"/db.bak")
+		}
+	}
+	if !ruisIo.PathExists(comm.Dir + "/data") {
+		err := os.MkdirAll(comm.Dir+"/data", 0755)
+		if err != nil {
+			println("Mkdir data err:" + err.Error())
+			return
+		}
+	}
 	err := comm.InitDb()
 	if err != nil {
 		println("InitDb err:" + err.Error())
@@ -53,6 +71,10 @@ func main() {
 	}
 	if mvData != "" {
 		service.MoveData(mvData)
+		return
+	}
+	if upgrade {
+		service.Upgrade()
 		return
 	}
 
@@ -69,6 +91,7 @@ func runWeb() {
 	core.JwtKey = jkey
 	route.Init()
 	mgr.ExecMgr.Start()
+	mgr.TriggerMgr.Start()
 	err := comm.Gin.Run(comm.Host)
 	if err != nil {
 		println("gin run err:" + err.Error())

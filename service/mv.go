@@ -55,7 +55,7 @@ func mvPlugin(tid int64, md *model.TModel) {
 	var olds []*ruisUtil.Map
 	err := dbold.SQL("select * from t_plugin where tid=?", tid).Find(&olds)
 	if err != nil {
-		fmt.Println("find model err:" + err.Error())
+		println("find model err:" + err.Error())
 		return
 	}
 	for _, v := range olds {
@@ -89,8 +89,48 @@ func mvPlugin(tid int64, md *model.TModel) {
 		}
 		_, err = comm.Db.Insert(ne)
 		if err != nil {
-			fmt.Sprintf("insert plug err:" + err.Error())
+			println("insert plug err:" + err.Error())
 			break
+		}
+	}
+}
+
+func MoveTrigger() {
+	var olds []*ruisUtil.Map
+	err := dbold.SQL("select * from t_trigger").Find(&olds)
+	if err != nil {
+		fmt.Println("find trigger err:" + err.Error())
+		return
+	}
+	for _, v := range olds {
+		/*id, err := v.GetInt("id")
+		if err != nil {
+			continue
+		}*/
+		del, err := v.GetInt("del")
+		if err != nil {
+			continue
+		}
+		enable, err := v.GetInt("enable")
+		if err != nil {
+			continue
+		}
+		ne := &model.TTrigger{}
+		ne.Uid = v.GetString("uid")
+		ne.Types = v.GetString("types")
+		ne.Title = v.GetString("title")
+		ne.Desc = v.GetString("desc")
+		ne.Config = v.GetString("config")
+		ne.Del = int(del)
+		ne.Enable = int(enable)
+		ne.Errs = v.GetString("errs")
+		if tm, ok := v.Get("times").(time.Time); ok {
+			ne.Times = tm
+		}
+		_, err = comm.Db.Insert(ne)
+		if err != nil {
+			println("MoveTrigger err:" + err.Error())
+			return
 		}
 	}
 }

@@ -1,3 +1,6 @@
+package comm
+
+const sqls = `
 /*
  Navicat Premium Data Transfer
 
@@ -245,3 +248,5 @@ ON "t_output" (
 -- ----------------------------
 
 PRAGMA foreign_keys = true;
+
+`
