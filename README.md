@@ -37,7 +37,7 @@ It is super easy to get started with your first project.
 
 #### Step 2: 启动服务
 
-```sh
+```
 ./gokins-unix-mac64
 ``` 
 #### Step 3: 查看服务
@@ -55,27 +55,34 @@ It is super easy to get started with your first project.
 - [下载最新版本](https://github.com/mgr9525/gokins/releases)
 
 - 或者直接在服务器上执行以下命令
+
 ```
-## 获取可执行文件
+
+//获取可执行文件
 wget -c  https://github.com/mgr9525/gokins/releases/download/v0.1.0/gokins-linux-amd64
 
-## 授权
+//授权
 chmod +x gokins-linux-amd64
 
-## 运行gokins
+//运行gokins
 ./gokins-linux-amd64
 
-##查看帮助命令
+//查看帮助命令
 ./gokins-linux-amd64 --help
+
 ```
+
 - 运行成功后 访问 `8030` 端口
 
 #### 初始化配置
 - 设置root账号密码
 
+![image](https://github.com/xxx/xx.png)
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/2020101018222471.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
 
 - 登录后我们可以查看主界面
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010183151544.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
 
 #### 流水线的使用
@@ -84,13 +91,16 @@ chmod +x gokins-linux-amd64
 配置代码目录
 
 ```
+
 cd ~
 mkdir programs
 cd programs
 git clone http://用户名:密码@git.xxx.cn/IPFS/IPFS-Slave.git
 cd IPFS-Slave/
 pwd
+
 ```
+
 使用用户名密码clone防止流水线更新代码时需要登录凭证
 
 复制此目录路径，新建流水线时需要
@@ -98,6 +108,7 @@ pwd
 2. 流水线构建
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010185507308.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
+
 3. 新建好之后进入插件列表新建插件
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010190422932.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
@@ -112,14 +123,18 @@ pwd
 5. 之后新建一个编译插件
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010185940669.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
+
 可以查看到有两个插件
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010190009652.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
 
 
 6. 返回运行流水线
 
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010190548125.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010190653913.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
+
 ![在这里插入图片描述](https://img-blog.csdnimg.cn/20201010190721865.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L21ncjk1MjU=,size_16,color_FFFFFF,t_70#pic_center)
 
 
@@ -162,7 +177,7 @@ Gokins目前还处于需要不断进步的阶段，如果你有兴趣假如我�
 
 ### 帮助
 
-```sh
+```
 ./gokins -h
 ``` 
 
@@ -178,7 +193,22 @@ Gokins目前还处于需要不断进步的阶段，如果你有兴趣假如我�
 
 
 ## Who is using
-[![一点通教学网](http://1ydts.com/image/biaotou.jpg)](http://1ydts.com)
+<a src="http://1ydts.com" align="center"><img src="static/whouse/biaotou.jpg" width="50%"  height="50%"></a>
 
+## 开发日志
 
+### Gokins V0.1.2 (更新日期2020-10-20)
+- 新增功能 ：
+ 1. 新增触发器（加入流水线日志触发方式）
+ 2. 实现触发器manager，task
+
+- bug fix ：
+ 1. 前端循环请求卡死问题
+ 2. 协程context严重bug整改
+
+- 优化问题 ：
+ 1. 日志入库改为日志文件,减少数据库大小
+ 2. 环境变量PATH优化,加入变量获取
+ 
+***
 
