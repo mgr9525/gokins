@@ -193,7 +193,7 @@ Gokins目前还处于需要不断进步的阶段，如果你有兴趣假如我�
 
 
 ## Who is using
-<a src="http://1ydts.com" align="center"><img src="static/whouse/biaotou.jpg" width="50%"  height="50%"></a>
+<a href="http://1ydts.com" align="center"><img src="static/whouse/biaotou.jpg" width="50%"  height="50%"></a>
 
 ## 开发日志
 
