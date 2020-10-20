@@ -11,6 +11,8 @@ import (
 	"os"
 	"path/filepath"
 
+	ruisIo "github.com/mgr9525/go-ruisutil/ruisio"
+
 	"github.com/gin-gonic/gin"
 
 	_ "time/tzdata"
@@ -44,6 +46,13 @@ func init() {
 	comm.Gin = gin.Default()
 }
 func main() {
+	if !ruisIo.PathExists(comm.Dir + "/data") {
+		err := os.MkdirAll(comm.Dir+"/data", 0755)
+		if err != nil {
+			println("Mkdir data err:" + err.Error())
+			return
+		}
+	}
 	err := comm.InitDb()
 	if err != nil {
 		println("InitDb err:" + err.Error())
