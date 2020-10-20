@@ -244,5 +244,4 @@ ON "t_output" (
 -- Auto increment value for t_plugin_run
 -- ----------------------------
 
-
 PRAGMA foreign_keys = true;
