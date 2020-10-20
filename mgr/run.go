@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -97,6 +98,8 @@ func (c *RunTask) run() {
 	c.end(4, "")
 }
 
+var regPATH = regexp.MustCompile(`^PATH=`)
+
 func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) {
 	defer ruisUtil.Recovers("RunTask.run", func(errs string) {
 		rterr = errors.New(errs)
@@ -146,8 +149,18 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 	cmd.Stdout = logfl
 	cmd.Stderr = logfl
 	if c.Md.Envs != "" {
+		noPath := true
 		str := strings.ReplaceAll(c.Md.Envs, "\t", "")
 		envs := strings.Split(str, "\n")
+		for i, s := range envs {
+			if regPATH.MatchString(s) {
+				noPath = false
+				envs[i] = strings.ReplaceAll(s, "$PATH", os.Getenv("PATH"))
+			}
+		}
+		if noPath {
+			envs = append(envs, "PATH="+os.Getenv("PATH"))
+		}
 		cmd.Env = envs
 	}
 	if c.Md.Wrkdir != "" {

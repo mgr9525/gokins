@@ -1,7 +1,7 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : gokins
+ Source Server         : gokinsdb
  Source Server Type    : SQLite
  Source Server Version : 3030001
  Source Schema         : main
@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 20/10/2020 00:17:26
+ Date: 20/10/2020 09:55:23
 */
 
 PRAGMA foreign_keys = false;
@@ -29,6 +29,8 @@ CREATE TABLE "sys_param" (
 -- ----------------------------
 -- Records of sys_param
 -- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -51,7 +53,9 @@ CREATE TABLE "sys_user" (
 -- ----------------------------
 -- Records of sys_user
 -- ----------------------------
+BEGIN;
 INSERT INTO "sys_user" VALUES (1, 'admin', 'root', NULL, '超级管理员', NULL, '2020-07-08 07:25:53', NULL, NULL, NULL);
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_model
@@ -66,12 +70,15 @@ CREATE TABLE "t_model" (
   "del" integer DEFAULT 0,
   "envs" text,
   "wrkdir" text,
-  "clrdir" integer DEFAULT 0
+  "clrdir" integer DEFAULT 0,
+  "timer_switch" integer
 );
 
 -- ----------------------------
 -- Records of t_model
 -- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_model_run
@@ -90,6 +97,8 @@ CREATE TABLE "t_model_run" (
 -- ----------------------------
 -- Records of t_model_run
 -- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_output
@@ -106,6 +115,8 @@ CREATE TABLE "t_output" (
 -- ----------------------------
 -- Records of t_output
 -- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_plugin
@@ -127,6 +138,8 @@ CREATE TABLE "t_plugin" (
 -- ----------------------------
 -- Records of t_plugin
 -- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Table structure for t_plugin_run
@@ -146,6 +159,29 @@ CREATE TABLE "t_plugin_run" (
 -- ----------------------------
 -- Records of t_plugin_run
 -- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_trigger
+-- ----------------------------
+DROP TABLE IF EXISTS "t_trigger";
+CREATE TABLE "t_trigger" (
+  "id" integer NOT NULL,
+  "types" integer,
+  "name" text,
+  "desc" text,
+  "times" date,
+  "config" text,
+  "del" integer DEFAULT 0,
+  PRIMARY KEY ("id")
+);
+
+-- ----------------------------
+-- Records of t_trigger
+-- ----------------------------
+BEGIN;
+COMMIT;
 
 -- ----------------------------
 -- Auto increment value for sys_param
@@ -154,7 +190,7 @@ CREATE TABLE "t_plugin_run" (
 -- ----------------------------
 -- Indexes structure for table sys_param
 -- ----------------------------
-CREATE INDEX "key"
+CREATE INDEX "main"."key"
 ON "sys_param" (
   "key" ASC
 );
@@ -162,15 +198,15 @@ ON "sys_param" (
 -- ----------------------------
 -- Indexes structure for table sys_user
 -- ----------------------------
-CREATE INDEX "IDX_sys_user_phone"
+CREATE INDEX "main"."IDX_sys_user_phone"
 ON "sys_user" (
   "phone" ASC
 );
-CREATE INDEX "name"
+CREATE INDEX "main"."name"
 ON "sys_user" (
   "name" ASC
 );
-CREATE INDEX "xid"
+CREATE INDEX "main"."xid"
 ON "sys_user" (
   "xid" ASC
 );
@@ -190,7 +226,7 @@ ON "sys_user" (
 -- ----------------------------
 -- Indexes structure for table t_output
 -- ----------------------------
-CREATE INDEX "kv"
+CREATE INDEX "main"."kv"
 ON "t_output" (
   "type" ASC,
   "tid" ASC
@@ -203,22 +239,5 @@ ON "t_output" (
 -- ----------------------------
 -- Auto increment value for t_plugin_run
 -- ----------------------------
-
-
--- ----------------------------
--- Table structure for t_trigger
--- ----------------------------
-DROP TABLE IF EXISTS "t_trigger";
-CREATE TABLE "t_trigger" (
-  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "types" INTEGER,
-  "name" TEXT,
-  "desc" TEXT,
-  "times" DATE,
-  "config" TEXT,
-  "del" integer DEFAULT 0,
-  PRIMARY KEY ("id")
-);
-
 
 PRAGMA foreign_keys = true;

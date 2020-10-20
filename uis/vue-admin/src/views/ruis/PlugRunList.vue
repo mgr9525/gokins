@@ -24,9 +24,9 @@
 
 		<div class="mains">
 			<div style="width:400px;margin-right:10px">
-				<el-card class="box-card runs" style="background:#E0EEEE">
+				<el-card class="box-card " style="background:#E0EEEE;margin-bottom: 10px;">
 					<div class="runrow">
-					<div style="flex:1"><span style="color:blue">流水线列表</span>
+					<div style="flex:1"><span style="color:blue">任务运行情况</span>
 						<br/><span style="color:red">{{mrerrs}}</span>
 					</div>
 
@@ -48,7 +48,8 @@
 					</div>
 
 					<div>
-					<el-tag v-if="it.RunStat==0" type="info">等待</el-tag>
+					<el-tag v-if="it.RunStat==0&&mrstat<2" type="info">等待</el-tag>
+					<el-tag v-if="it.RunStat==0&&mrstat>=2" type="info">未运行</el-tag>
 					<el-tag v-if="it.RunStat==1" type="warning">运行</el-tag>
 					<el-tag v-if="it.RunStat==2" type="danger">失败</el-tag>
 					<el-tag v-if="it.RunStat==4" type="success">成功</el-tag>
@@ -58,7 +59,8 @@
 			</div>
 			<div style="flex:1;white-space: break-spaces;word-break: break-all;">
 				<el-card class="box-card">
-				<div>
+					<div style="color:blue">{{logs[selid]&&logs[selid].tit}}</div>
+				<div style="border-top:1px dashed #aaa">
 					<pre style="white-space: pre-line;">{{logs[selid]&&logs[selid].text}}</pre>
 				</div>
 				</el-card>
@@ -115,7 +117,8 @@
 			//获取列表
 			getList() {
 				if(!this.running)return;
-				this.$post('/plug/runs',{id:this.tid,pid:this.selid,first:this.loading}).then((res) => {
+				let selid=this.selid;
+				this.$post('/plug/runs',{id:this.tid,pid:selid,first:this.loading}).then((res) => {
               		console.log(res);
 					this.loading = false;
 					this.getInfo(res.data.tid);
@@ -126,7 +129,7 @@
 						this.running=false;
 					}
 					this.getList();
-					this.getLog();
+					this.getLog(selid);
 				}).catch(err=>{
 					this.loading = false;
 					this.$message({
@@ -145,16 +148,18 @@
 				if(this.mpdata[e.Id]){
 					this.mpdata[e.Id].selected=true;
 				}else{
-					this.mpdata[e.Id]={selected:true}
+					this.mpdata[e.Id]={tit:e.Title,selected:true}
 				}
 				this.selid=e.Id;
 				this.$forceUpdate();
 				console.log('showLog:',this.mpdata[idx]);
-				if(!this.running)this.getLog();
-			},getLog(ls){
-				if(this.selid==''||this.selid<=0)return;
-				this.$post('/plug/log',{tid:this.tid,pid:this.selid}).then(res=>{
-					this.logs[this.selid]=res.data;
+				if(!this.running)this.getLog(this.selid);
+			},getLog(selid){
+				if(selid==''||selid<=0)return;
+				if(this.logs[selid]&&!this.running)return;
+				this.$post('/plug/log',{tid:this.tid,pid:selid}).then(res=>{
+					res.data.tit=this.mpdata[selid].tit;
+					this.logs[selid]=res.data;
 					this.$forceUpdate();
 				})
 			}

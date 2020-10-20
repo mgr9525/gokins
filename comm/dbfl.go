@@ -13,7 +13,7 @@ const sqls = `
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 02/10/2020 22:40:17
+ Date: 20/10/2020 09:55:23
 */
 
 PRAGMA foreign_keys = false;
@@ -73,7 +73,8 @@ CREATE TABLE "t_model" (
   "del" integer DEFAULT 0,
   "envs" text,
   "wrkdir" text,
-  "clrdir" integer DEFAULT 0
+  "clrdir" integer DEFAULT 0,
+  "timer_switch" integer
 );
 
 -- ----------------------------
@@ -155,12 +156,32 @@ CREATE TABLE "t_plugin_run" (
   "times" datetime,
   "timesd" datetime,
   "state" integer,
-  "excode" integer,
-  "output" text
+  "excode" integer
 );
 
 -- ----------------------------
 -- Records of t_plugin_run
+-- ----------------------------
+BEGIN;
+COMMIT;
+
+-- ----------------------------
+-- Table structure for t_trigger
+-- ----------------------------
+DROP TABLE IF EXISTS "t_trigger";
+CREATE TABLE "t_trigger" (
+  "id" integer NOT NULL,
+  "types" integer,
+  "name" text,
+  "desc" text,
+  "times" date,
+  "config" text,
+  "del" integer DEFAULT 0,
+  PRIMARY KEY ("id")
+);
+
+-- ----------------------------
+-- Records of t_trigger
 -- ----------------------------
 BEGIN;
 COMMIT;
@@ -221,23 +242,6 @@ ON "t_output" (
 -- ----------------------------
 -- Auto increment value for t_plugin_run
 -- ----------------------------
-
-
--- ----------------------------
--- Table structure for t_trigger
--- ----------------------------
-DROP TABLE IF EXISTS "t_trigger";
-CREATE TABLE "t_trigger" (
-  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
-  "types" INTEGER,
-  "name" TEXT,
-  "desc" TEXT,
-  "times" DATE,
-  "config" TEXT,
-  "del" integer DEFAULT 0,
-  PRIMARY KEY ("id")
-);
-
 
 PRAGMA foreign_keys = true;
 

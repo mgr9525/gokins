@@ -2,14 +2,15 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
 	"gokins/comm"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/dbService"
 	"io/ioutil"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
 func PlugList(c *gin.Context, req *ruisUtil.Map) {
@@ -87,6 +88,9 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	c.JSON(200, res)
 }
 func PlugLog(c *gin.Context, req *ruisUtil.Map) {
+	if req.GetBool("first") == false {
+		time.Sleep(time.Second)
+	}
 	tid, err := req.GetInt("tid")
 	if err != nil || tid <= 0 {
 		c.String(500, "param err")
