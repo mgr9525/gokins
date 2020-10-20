@@ -250,7 +250,7 @@ ON "t_output" (
 -- ----------------------------
 DROP TABLE IF EXISTS "t_trigger";
 CREATE TABLE "t_trigger" (
-  "id" INTEGER NOT NULL,
+  "id" integer NOT NULL PRIMARY KEY AUTOINCREMENT,
   "types" INTEGER,
   "name" TEXT,
   "desc" TEXT,
@@ -259,6 +259,7 @@ CREATE TABLE "t_trigger" (
   "del" integer DEFAULT 0,
   PRIMARY KEY ("id")
 );
+
 
 
 PRAGMA foreign_keys = true;
