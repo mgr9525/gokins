@@ -99,7 +99,7 @@ func MoveTrigger() {
 	var olds []*ruisUtil.Map
 	err := dbold.SQL("select * from t_trigger").Find(&olds)
 	if err != nil {
-		fmt.Println("find model err:" + err.Error())
+		fmt.Println("find trigger err:" + err.Error())
 		return
 	}
 	for _, v := range olds {
