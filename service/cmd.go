@@ -66,4 +66,6 @@ func MoveData(pth string) {
 	dbold = db
 	MoveModels()
 	MoveTrigger()
+
+	println("Upgrade complete!!!!")
 }
