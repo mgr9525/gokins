@@ -2,14 +2,14 @@ package server
 
 import (
 	"fmt"
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
 	"gokins/comm"
-	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/dbService"
-
-	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
+	"io/ioutil"
+	"time"
 )
 
 func PlugList(c *gin.Context, req *ruisUtil.Map) {
@@ -52,6 +52,9 @@ func PlugDel(c *gin.Context, req *ruisUtil.Map) {
 	c.String(200, fmt.Sprintf("%d", m.Id))
 }
 func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
+	if req.GetBool("first") == false {
+		time.Sleep(time.Second)
+	}
 	id, err := req.GetInt("id")
 	if err != nil || id <= 0 {
 		c.String(500, "param err")
@@ -78,6 +81,8 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	res := ruisUtil.NewMap()
 	res.Set("list", ls)
 	res.Set("tid", mr.Tid)
+	res.Set("state", mr.State)
+	res.Set("errs", mr.Errs)
 	res.Set("end", mr.State >= 2)
 	c.JSON(200, res)
 }
@@ -94,20 +99,21 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 	}
 	mr := dbService.GetModelRun(int(tid))
 	if mr == nil {
-		c.String(404, "not found")
+		c.String(404, "not found mr")
 		return
 	}
-	e := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
-	if e == nil {
-		c.String(404, "not found")
+	rn := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
+	if rn == nil {
+		c.String(404, "not found rn")
 		return
 	}
-	res := ruisUtil.NewMap()
-	res.Set("up", true)
-	res.Set("text", mgr.ExecMgr.TaskRead(mr.Id, e.Id))
-	if e != nil && e.State >= 2 {
-		res.Set("up", false)
-		res.Set("text", e.Output)
+	ret := ruisUtil.NewMap()
+	ret.Set("id", rn.Id)
+	ret.Set("text", "")
+	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Tid, rn.Id)
+	outs, err := ioutil.ReadFile(logpth)
+	if err == nil {
+		ret.Set("text", string(outs))
 	}
-	c.JSON(200, res)
+	c.JSON(200, ret)
 }

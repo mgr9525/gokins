@@ -2,7 +2,6 @@ import axios from 'axios';
 import { getToken,setToken,removeToken } from '@/util/storage';
 
 const apiUrl=process.env.NODE_ENV === 'production' ? '' : "http://localhost:8030";
-// const apiUrl='http://open.vkstu.com:8050';
 
 const serv=axios.create({
     baseURL: apiUrl, // api base_url

@@ -14,8 +14,6 @@ import (
 	ruisIo "github.com/mgr9525/go-ruisutil/ruisio"
 
 	"github.com/gin-gonic/gin"
-
-	_ "time/tzdata"
 )
 
 var (

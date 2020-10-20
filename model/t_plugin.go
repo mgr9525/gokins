@@ -26,5 +26,5 @@ type TPluginRun struct {
 	Timesd time.Time
 	State  int //-1已停止，0等待，1运行，2运行失败，4运行成功
 	Excode int
-	Output string
+	//Output string //删除日志入库操作，减轻数据库压力
 }
