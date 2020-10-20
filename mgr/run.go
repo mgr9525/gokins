@@ -29,14 +29,14 @@ type RunTask struct {
 }
 
 func (c *RunTask) start() {
-	if c.cncl != nil {
+	if c.Mr == nil || c.cncl != nil {
 		return
 	}
 	c.Md = dbService.GetModel(c.Mr.Tid)
 	if c.Md == nil {
 		return
 	}
-	c.ctx, c.cncl = context.WithCancel(context.Background())
+	c.ctx, c.cncl = context.WithCancel(mgrCtx)
 	go c.run()
 }
 

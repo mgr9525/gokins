@@ -24,4 +24,5 @@ type TModelRun struct {
 	Timesd time.Time
 	State  int //-1已停止，0等待，1运行，2运行失败，4运行成功
 	Errs   string
+	Tgtyp  string
 }

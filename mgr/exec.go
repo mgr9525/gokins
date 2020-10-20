@@ -23,12 +23,14 @@ func (c *execManager) Start() {
 		for {
 			select {
 			case <-mgrCtx.Done():
-				break
+				goto end
 			default:
 				c.run()
 				time.Sleep(time.Second)
 			}
 		}
+	end:
+		println("ctx end!")
 	}()
 }
 func (c *execManager) run() {

@@ -1,25 +1,22 @@
 <template>
-  <el-dialog title="流水线编辑" :visible.sync="formVisible" :close-on-click-modal="false">
+  <el-dialog title="触发器编辑" :visible.sync="formVisible" :close-on-click-modal="false">
     <el-col :span="24" style="margin-bottom: 20px;">
       <el-form :model="formData" label-width="180px" :rules="formRules" ref="formd">
-        <el-form-item  label="触发器名称" prop="Name">
-          <el-input v-model="formData.Name" auto-complete="off"></el-input>
+        <el-form-item  label="触发器名称" prop="Title">
+          <el-input v-model="formData.Title" auto-complete="off"></el-input>
         </el-form-item>
         <el-form-item label="描述">
           <el-input type="textarea" v-model="formData.Desc" auto-complete="off"></el-input>
         </el-form-item>
-        <el-form-item label="触发器类型">
+        <el-form-item label="触发器类型" prop="Types">
           <el-select v-model="formData.Types" placeholder="请选择">
-            <el-option
-                v-for="item in options"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value">
-            </el-option>
+            <!-- <el-option label="git触发" value="git"></el-option> -->
+            <el-option label="定时器触发" value="timer"></el-option>
           </el-select>
+					<el-switch v-model="formData.enable" active-text="激活"></el-switch>
         </el-form-item>
         <el-form-item label="流水线">
-          <el-select v-model="formTriggerData.ModelId" placeholder="请选择">
+          <el-select v-model="formTriggerData.mid" placeholder="请选择">
             <el-option
                 v-for="item in modelOptions"
                 :key="item.Id"
@@ -28,8 +25,19 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="表达式" v-if="formData.Types == '2' ">
-          <el-input type="textarea"   v-model="formTriggerData.Expression" auto-complete="off" ></el-input>
+        <el-form-item label="重复" v-if="formData.Types == 'timer'">
+          <el-select v-model="formTriggerData.repeated" placeholder="请选择">
+            <el-option label="不重复" value="0"></el-option>
+            <el-option label="每天" value="1"></el-option>
+            <el-option label="每周" value="2"></el-option>
+            <el-option label="每月" value="3"></el-option>
+            <el-option label="每年" value="4"></el-option>
+          </el-select>
+          <el-date-picker
+            v-model="formTriggerData.dates"
+            type="datetime"
+            placeholder="选择日期时间">
+          </el-date-picker>
         </el-form-item>
       </el-form>
     </el-col>
@@ -58,21 +66,13 @@ export default {
       formRules: {
         Title: [
           {required: true, message: '请输入参数'}
+        ],Types: [
+          {required: true, message: '请输入参数'}
         ]
       },
       //新增界面数据
       formData: {},
       formTriggerData: {},
-      options: [{
-        value: 0,
-        label: '手动触发'
-      }, {
-        value: 1,
-        label: 'git触发'
-      }, {
-        value: 2,
-        label: '定时器触发'
-      }],
       modelOptions: [],
     }
   },
@@ -104,28 +104,30 @@ export default {
       this.formVisible = true;
       this.formData = {
         Id: '',
-        Name: '',
+        Title: '',
         Desc: '',
         Types: '',
         Config: '',
+        enable:false
       }
       this.formTriggerData = {
-        ModelId: '',
-        Expression: '',
+        mid:'',
+        repeated:'',
+        dates:''
       }
       if (e){
         this.formData = {
           Id: e.Id,
-          Name: e.Name,
+          Title: e.Title,
           Desc: e.Desc,
           Types: e.Types,
           Config: e.Config,
+          enable:e.Enable==1
         }
+        try{
         var res = JSON.parse(e.Config);
-        this.formTriggerData = {
-          ModelId: res.ModelId,
-          Expression: res.Expression,
-        }
+        this.formTriggerData = res
+        }catch(e){}
       }
 
 
@@ -151,8 +153,19 @@ export default {
 			},*/formSubmit() {
       this.$refs.formd.validate((valid) => {
         if (valid) {
+          if(this.formData.Types=='timer'){
+            console.log('formTriggerData:',this.formTriggerData);
+            if(this.formTriggerData.repeated==''){
+              this.$message('请选择重复类型');
+              return
+            }
+            if(this.formTriggerData.dates==''){
+              this.$message('请选择日期');
+              return
+            }
+          }
           this.formLoading = true;
-          this.formData.Clrdir = this.formData.clrdir ? 1 : 2;
+          this.formData.Enable = this.formData.enable ? 1 : 2;
           this.formData.Config = JSON.stringify(this.formTriggerData)
           this.$post('/trigger/edit', this.formData).then(res => {
             console.log(res);

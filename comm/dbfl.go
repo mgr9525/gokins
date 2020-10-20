@@ -13,7 +13,7 @@ const sqls = `
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 20/10/2020 09:55:23
+ Date: 20/10/2020 16:13:59
 */
 
 PRAGMA foreign_keys = false;
@@ -94,7 +94,8 @@ CREATE TABLE "t_model_run" (
   "times" datetime,
   "timesd" datetime,
   "state" integer,
-  "errs" text
+  "errs" text,
+  "tgtyp" varchar
 );
 
 -- ----------------------------
@@ -171,12 +172,15 @@ COMMIT;
 DROP TABLE IF EXISTS "t_trigger";
 CREATE TABLE "t_trigger" (
   "id" integer NOT NULL,
-  "types" integer,
-  "name" text,
+  "uid" varchar,
+  "types" varchar,
+  "title" varchar,
   "desc" text,
   "times" date,
   "config" text,
   "del" integer DEFAULT 0,
+  "enable" integer DEFAULT 0,
+  "errs" text,
   PRIMARY KEY ("id")
 );
 

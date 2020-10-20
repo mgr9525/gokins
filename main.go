@@ -78,6 +78,7 @@ func runWeb() {
 	core.JwtKey = jkey
 	route.Init()
 	mgr.ExecMgr.Start()
+	mgr.TriggerMgr.Start()
 	err := comm.Gin.Run(comm.Host)
 	if err != nil {
 		println("gin run err:" + err.Error())

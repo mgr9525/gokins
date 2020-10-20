@@ -22,9 +22,13 @@
       </el-table-column> -->
       <el-table-column type="index" width="60">
       </el-table-column>
-      <el-table-column label="名称" prop="Name" width="250" sortable>
+      <el-table-column label="名称" prop="Title" width="250" sortable>
       </el-table-column>
-      <el-table-column prop="Desc" label="描述" sortable>
+      <el-table-column label="描述">
+				<template slot-scope="{row}">
+          <span>{{row.Desc}}</span>
+          <p style="color:red" v-if="row.Errs!=''">启动错误：{{row.Errs}}</p>
+				</template>
       </el-table-column>
       <el-table-column prop="Types" label="触发器类型" :formatter="typesFormatter" sortable>
       </el-table-column>
@@ -117,7 +121,13 @@ export default {
 
     },
     typesFormatter: function (row, column) {
-      return row.Types == '1' ? "git触发" : row.Types == '2' ? "定时器触发" : "手动触发";
+      let typ=row.Types == 'git' ? "git" : row.Types == 'timer' ? "定时器" : "手动";
+      if(row.Enable==1){
+        typ+='(已激活)';
+      }else{
+        typ+='(未激活)';
+      }
+      return typ;
     },
     dateFormat: function (row, column) {
       var t = new Date(row.Times);//row 表示一行数据, updateTime 表示要格式化的字段名称

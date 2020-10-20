@@ -2,12 +2,15 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
 	"gokins/comm"
 	"gokins/core"
+	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
+	"gokins/service/utilService"
+
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
 func TriggerList(c *gin.Context, req *ruisUtil.Map) {
@@ -27,14 +30,17 @@ func TriggerList(c *gin.Context, req *ruisUtil.Map) {
 }
 
 func TriggerEdit(c *gin.Context, req *models.Trigger) {
-	if req.Types < 0 || req.Types > 3 {
+	if req.Types == "" || req.Title == "" {
 		c.String(500, "param err")
 		return
 	}
+	lgusr := utilService.CurrMUser(c)
+	req.Uid = lgusr.Xid
 	if err := req.Save(); err != nil {
 		c.String(500, "save err:"+err.Error())
 		return
 	}
+	mgr.TriggerMgr.Refresh(req.Id)
 	c.String(200, fmt.Sprintf("%d", req.Id))
 }
 

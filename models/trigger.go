@@ -8,11 +8,14 @@ import (
 
 type Trigger struct {
 	Id     int `xorm:"pk autoincr"`
-	Types  int //0 : 手动触发  1:git触发 2:定时器触发
-	Name   string
+	Uid    string
+	Types  string
+	Title  string
 	Desc   string
 	Times  time.Time
 	Config string //配置详情json
+	Enable int
+	Errs   string
 }
 
 func (Trigger) TableName() string {
@@ -22,7 +25,7 @@ func (Trigger) TableName() string {
 func (c *Trigger) Save() error {
 	var err error
 	if c.Id > 0 {
-		_, err = comm.Db.Cols("types", "name", "desc", "config").Where("id=?", c.Id).Update(c)
+		_, err = comm.Db.Cols("types", "name", "desc", "config", "enable").Where("id=?", c.Id).Update(c)
 	} else {
 		c.Times = time.Now()
 		_, err = comm.Db.Insert(c)
