@@ -28,7 +28,7 @@ type trigTimeTask struct {
 	runtm time.Time
 }
 
-func (c *trigTimeTask) start() error {
+func (c *trigTimeTask) start(pars ...interface{}) error {
 	if c.tg == nil || c.cncl != nil {
 		return errors.New("already run")
 	}
@@ -59,6 +59,7 @@ func (c *trigTimeTask) start() error {
 			}
 		}
 	end:
+		c.cncl = nil
 		println("ctx end!")
 	}()
 	return nil
@@ -105,7 +106,8 @@ func (c *trigTimeTask) run() {
 		rn.Tid = c.md.Id
 		rn.Uid = c.tg.Uid
 		rn.Times = time.Now()
-		rn.Tgtyp = "timer"
+		rn.Tgid = c.tg.Id
+		rn.Tgtyps = "定时器触发"
 		comm.Db.Insert(rn)
 		ExecMgr.Refresh()
 		println("trigTimeTask model run id:", rn.Id)

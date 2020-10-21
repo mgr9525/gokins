@@ -19,7 +19,7 @@ type triggerManager struct {
 }
 
 type iTrigger interface {
-	start() error
+	start(pars ...interface{}) error
 	stop()
 	isRun() bool
 }
@@ -32,6 +32,7 @@ func (c *triggerManager) Start() {
 			case <-mgrCtx.Done():
 				goto end
 			default:
+				c.runChk()
 				c.runRfs()
 				time.Sleep(time.Second)
 			}
@@ -47,6 +48,8 @@ func (c *triggerManager) runChk() {
 	}
 	c.tmChk = time.Now()
 
+	c.lk.Lock()
+	defer c.lk.Unlock()
 	for k, v := range c.tasks {
 		if !v.isRun() {
 			delete(c.tasks, k)
@@ -62,36 +65,18 @@ func (c *triggerManager) runRfs() {
 	}
 	c.tmRfs = time.Now()
 	var ls []*model.TTrigger
-	err := comm.Db.Where("del!=1 and enable=1").Find(&ls)
+	// 目前只有timer需要Task
+	err := comm.Db.Where("del!=1 and enable=1").And("types='timer'").Find(&ls)
 	if err != nil {
 		println("triggerManager err:" + err.Error())
 		return
 	}
-	c.lk.Lock()
-	defer c.lk.Unlock()
 	for _, v := range ls {
+		c.lk.Lock()
 		_, ok := c.tasks[v.Id]
+		c.lk.Unlock()
 		if !ok {
-			var i iTrigger
-			switch v.Types {
-			case "git":
-				//TODO: git not get
-				break
-			case "timer":
-				i = &trigTimeTask{tg: v}
-			}
-			if i == nil {
-				continue
-			}
-			errs := i.start()
-			v.Errs = ""
-			if errs != nil {
-				v.Errs = errs.Error()
-				println("trigTimeTask start err:" + v.Errs)
-			} else {
-				c.tasks[v.Id] = i
-			}
-			comm.Db.Cols("errs").Where("id=?", v.Id).Update(v)
+			c.StartOne(v)
 		}
 	}
 }
@@ -100,8 +85,36 @@ func (c *triggerManager) Refresh(id int) {
 	c.lk.Lock()
 	defer c.lk.Unlock()
 	v, ok := c.tasks[id]
-	delete(c.tasks, id)
 	if ok {
 		v.stop()
+		delete(c.tasks, id)
 	}
+}
+
+func (c *triggerManager) StartOne(trg *model.TTrigger, pars ...interface{}) {
+	defer ruisUtil.Recovers("StartOne", nil)
+	if trg.Del == 1 || trg.Enable != 1 {
+		return
+	}
+	var i iTrigger
+	switch trg.Types {
+	case "timer":
+		i = &trigTimeTask{tg: trg}
+	case "hook":
+		i = &trigHookTask{tg: trg}
+	}
+	if i == nil {
+		return
+	}
+	errs := i.start(pars...)
+	trg.Errs = ""
+	if errs != nil {
+		trg.Errs = errs.Error()
+		println("trigTimeTask start err:" + trg.Errs)
+	} else {
+		c.lk.Lock()
+		c.tasks[trg.Id] = i
+		c.lk.Unlock()
+	}
+	comm.Db.Cols("errs").Where("id=?", trg.Id).Update(trg)
 }

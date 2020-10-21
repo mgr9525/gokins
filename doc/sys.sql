@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 20/10/2020 16:13:59
+ Date: 21/10/2020 21:25:57
 */
 
 PRAGMA foreign_keys = false;
@@ -92,7 +92,8 @@ CREATE TABLE "t_model_run" (
   "timesd" datetime,
   "state" integer,
   "errs" text,
-  "tgtyp" varchar
+  "tgid" integer,
+  "tgtyps" text
 );
 
 -- ----------------------------

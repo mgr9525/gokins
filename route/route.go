@@ -58,4 +58,9 @@ func Init() {
 		gpTimer.Any("/del", core.GinHandler(server.TriggerDel))
 	}
 
+	//hook
+	gpHook := comm.Gin.Group("/hook")
+	{
+		gpHook.Any("/trigger/:trid", server.HookTrigger)
+	}
 }

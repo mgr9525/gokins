@@ -99,7 +99,7 @@ func MoveTrigger() {
 	var olds []*ruisUtil.Map
 	err := dbold.SQL("select * from t_trigger").Find(&olds)
 	if err != nil {
-		fmt.Println("find trigger err:" + err.Error())
+		//fmt.Println("find trigger err:" + err.Error())
 		return
 	}
 	for _, v := range olds {
@@ -124,6 +124,32 @@ func MoveTrigger() {
 		ne.Del = int(del)
 		ne.Enable = int(enable)
 		ne.Errs = v.GetString("errs")
+		if tm, ok := v.Get("times").(time.Time); ok {
+			ne.Times = tm
+		}
+		_, err = comm.Db.Insert(ne)
+		if err != nil {
+			println("MoveTrigger err:" + err.Error())
+			return
+		}
+	}
+}
+
+func MoveParam() {
+	var olds []*ruisUtil.Map
+	err := dbold.SQL("select * from sys_param").Find(&olds)
+	if err != nil {
+		fmt.Println("find trigger err:" + err.Error())
+		return
+	}
+	for _, v := range olds {
+		cont, ok := v.Get("cont").([]byte)
+		if !ok {
+			continue
+		}
+		ne := &model.SysParam{}
+		ne.Key = v.GetString("key")
+		ne.Cont = cont
 		if tm, ok := v.Get("times").(time.Time); ok {
 			ne.Times = tm
 		}
