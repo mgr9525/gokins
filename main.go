@@ -47,7 +47,7 @@ func init() {
 }
 func main() {
 	if upgrade {
-		os.RemoveAll(comm.Dir + "/data")
+		os.RemoveAll(comm.Dir + "/data/logs")
 		if !ruisIo.PathExists(comm.Dir + "/db.dat") {
 			println("未找到原有数据库")
 			return

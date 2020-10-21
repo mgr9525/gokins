@@ -1,12 +1,13 @@
 package server
 
 import (
+	"bytes"
 	"fmt"
 	"gokins/comm"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/dbService"
-	"io/ioutil"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -88,9 +89,7 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	c.JSON(200, res)
 }
 func PlugLog(c *gin.Context, req *ruisUtil.Map) {
-	if req.GetBool("first") == false {
-		time.Sleep(time.Second)
-	}
+	pos, _ := req.GetInt("pos")
 	tid, err := req.GetInt("tid")
 	if err != nil || tid <= 0 {
 		c.String(500, "param err")
@@ -111,13 +110,31 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 		c.String(404, "not found rn")
 		return
 	}
+
+	ln := pos
+	bts := make([]byte, 1024)
+	buf := &bytes.Buffer{}
 	ret := ruisUtil.NewMap()
 	ret.Set("id", rn.Id)
 	ret.Set("text", "")
 	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Tid, rn.Id)
-	outs, err := ioutil.ReadFile(logpth)
+	fl, err := os.Open(logpth)
 	if err == nil {
-		ret.Set("text", string(outs))
+		if pos > 0 {
+			fl.Seek(pos, 0)
+		}
+		for {
+			n, err := fl.Read(bts)
+			if n > 0 {
+				ln += int64(n)
+				buf.Write(bts[:n])
+			}
+			if err != nil {
+				break
+			}
+		}
+		ret.Set("text", buf.String())
 	}
+	ret.Set("pos", ln)
 	c.JSON(200, ret)
 }

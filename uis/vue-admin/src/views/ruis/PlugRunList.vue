@@ -117,8 +117,8 @@
 			//获取列表
 			getList() {
 				if(!this.running)return;
-				let selid=this.selid;
-				this.$post('/plug/runs',{id:this.tid,pid:selid,first:this.loading}).then((res) => {
+				this.getLog(this.selid);
+				this.$post('/plug/runs',{id:this.tid,first:this.loading}).then((res) => {
               		console.log(res);
 					this.loading = false;
 					this.getInfo(res.data.tid);
@@ -129,7 +129,6 @@
 						this.running=false;
 					}
 					this.getList();
-					this.getLog(selid);
 				}).catch(err=>{
 					this.loading = false;
 					this.$message({
@@ -156,10 +155,15 @@
 				if(!this.running)this.getLog(this.selid);
 			},getLog(selid){
 				if(selid==''||selid<=0)return;
-				if(this.logs[selid]&&!this.running)return;
-				this.$post('/plug/log',{tid:this.tid,pid:selid}).then(res=>{
+				let log=this.logs[selid];
+				if(log&&!this.running)return;
+				this.$post('/plug/log',{tid:this.tid,pid:selid,pos:log?log.pos:0}).then(res=>{
 					res.data.tit=this.mpdata[selid].tit;
-					this.logs[selid]=res.data;
+					if(log&&res.data.pos>0){
+						log.pos=res.data.pos;
+						log.text+=res.data.text;
+					}else
+						this.logs[selid]=res.data;
 					this.$forceUpdate();
 				})
 			}
