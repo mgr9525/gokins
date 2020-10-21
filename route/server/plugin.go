@@ -121,7 +121,11 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 	fl, err := os.Open(logpth)
 	if err == nil {
 		if pos > 0 {
-			fl.Seek(pos, 0)
+			_, err = fl.Seek(pos, 0)
+			if err != nil {
+				c.String(500, "Seek err:"+err.Error())
+				return
+			}
 		}
 		for {
 			n, err := fl.Read(bts)
