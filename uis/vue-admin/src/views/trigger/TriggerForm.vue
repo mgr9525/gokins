@@ -130,7 +130,7 @@ export default {
       console.log('plugChange',e);
       if(!this.formTriggerData.conf||this.formTriggerData.conf==''){
         if(e=='gitee'){
-          this.formTriggerData.conf='{"password":"pwd","operate":["merged"]}';
+          this.$set(this.formTriggerData,"conf",'{"password":"pwd","operate":["merged"]}');
         }
       }
     },
