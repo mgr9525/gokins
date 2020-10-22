@@ -52,9 +52,7 @@
         </el-form-item>
         <el-form-item label="插件配置(json)" v-if="formData.Types == 'hook'">
           <el-input type="textarea" v-model="formTriggerData.conf" :rows="8"></el-input>
-          <el-tag type="info" v-if="formTriggerData.plug=='gitee'">password:推送密码,branch:push对象分支</el-tag>
-          <el-tag type="info" v-if="formTriggerData.plug=='github'">secretkey:签名秘钥,branch:push对象分支</el-tag>
-          <el-tag type="info" v-if="formTriggerData.plug=='gitlab'">token:秘钥,branch:push对象分支</el-tag>
+          <el-tag type="info">{{formTriggerData.plug&&hooks[formTriggerData.plug]?hooks[formTriggerData.plug].Desc:''}}</el-tag>
           <div><el-tag type="warning" v-if="formData.Id&&formData.Id!=''&&formData.Id>0">hook请求地址：http://yourhost:port/hook/trigger/{{formData.Id}}</el-tag></div>
         </el-form-item>
       </el-form>
@@ -92,7 +90,7 @@ export default {
       formData: {},
       formTriggerData: {},
       modelOptions: [],
-      hooks:[]
+      hooks:[],
     }
   },
   mounted() {
@@ -130,14 +128,11 @@ export default {
       });
     },plugChange(e){
       console.log('plugChange',e);
-      if(!this.formTriggerData.conf||this.formTriggerData.conf==''){
-        if(e=='gitee')
-          this.$set(this.formTriggerData,"conf",'{"password":"pwd","branch":"master"}');
-        else if(e=='github')
-          this.$set(this.formTriggerData,"conf",'{"secretkey":"pwd","branch":"master"}');
-        else if(e=='gitlab')
-          this.$set(this.formTriggerData,"conf",'{"token":"pwd","branch":"master"}');
-      }
+      // if(!this.formTriggerData.conf||this.formTriggerData.conf==''){
+        if(this.formTriggerData.plug&&this.hooks[this.formTriggerData.plug]){
+          this.$set(this.formTriggerData,"conf",this.hooks[this.formTriggerData.plug].Defs);
+        }
+      // }
     },
     show(e) {
       this.formVisible = true;

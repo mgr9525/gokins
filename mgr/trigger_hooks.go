@@ -1,16 +1,40 @@
 package mgr
 
 type Hookjs struct {
-	Uis map[string]string
-	js  string
+	Uis  map[string]string
+	Desc string
+	Defs string
+	js   string
 }
 
 var HookjsMap map[string]*Hookjs
 
 func init() {
 	HookjsMap = make(map[string]*Hookjs)
+	HookjsMap["web"] = &Hookjs{
+		Uis:  map[string]string{"password": "string"},
+		Desc: "password:触发密码",
+		Defs: `{"password":"pwd"}`,
+		js: `
+
+function main(){
+	console.log('start run main function!!!!');
+	var ret={check:false};
+	var conf=getConf();
+    var body=getBody();
+	if(conf.password!=body.password){
+		ret.errs='触发请求密码错误';
+		return ret;
+    }
+	ret.check=true;
+	return ret
+}
+`,
+	}
 	HookjsMap["gitee"] = &Hookjs{
-		Uis: map[string]string{"password": "string", "branch": "string"},
+		Uis:  map[string]string{"password": "string", "branch": "string"},
+		Desc: "password:推送密码,branch:push对象分支",
+		Defs: `{"password":"pwd","branch":"master"}`,
 		js: `
 
 function main(){
@@ -36,6 +60,8 @@ function main(){
 	}
 	/*HookjsMap["github"] = &Hookjs{
 			Uis: map[string]string{"secretkey": "string", "branch": "string"},
+		Desc: "secretkey:签名秘钥,branch:push对象分支",
+		Defs: `{"secretkey":"pwd","branch":"master"}`,
 			js: `
 
 	function main(){
@@ -63,7 +89,9 @@ function main(){
 	`,
 		}*/
 	HookjsMap["gitlab"] = &Hookjs{
-		Uis: map[string]string{"token": "string", "branch": "string"},
+		Uis:  map[string]string{"token": "string", "branch": "string"},
+		Desc: "token:秘钥,branch:push对象分支",
+		Defs: `{"token":"pwd","branch":"master"}`,
 		js: `
 
 function main(){
