@@ -37,7 +37,10 @@
 					#{{row.Id}}</el-link>
 				</template>
 			</el-table-column>
-			<el-table-column prop="Tgtyps" width="120">
+			<el-table-column label="触发" width="120">
+				<template slot-scope="{row}">
+					<el-tag>{{row.Tgtyps}}</el-tag>
+				</template>
 			</el-table-column>
 			<el-table-column prop="Times1" label="运行时间" width="200" sortable>
 			</el-table-column>
