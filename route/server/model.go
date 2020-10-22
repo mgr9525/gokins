@@ -105,6 +105,7 @@ func ModelRun(c *gin.Context, req *ruisUtil.Map) {
 	m := &models.ModelRun{}
 	m.Tid = int(id)
 	m.Uid = lgusr.Xid
+	m.Tgtyps = "手动触发"
 	if err := m.Add(); err != nil {
 		c.String(500, "add err:"+err.Error())
 		return
