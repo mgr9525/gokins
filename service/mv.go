@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gokins/comm"
 	"gokins/model"
+	"gokins/service/dbService"
 	"time"
 
 	"github.com/go-xorm/xorm"
@@ -135,6 +136,39 @@ func MoveTrigger() {
 	}
 }
 
+func MoveUser() {
+	var olds []*ruisUtil.Map
+	err := dbold.SQL("select * from sys_user").Find(&olds)
+	if err != nil {
+		fmt.Println("find trigger err:" + err.Error())
+		return
+	}
+	for _, v := range olds {
+		isup := true
+		ne := dbService.FindUserName(v.GetString("name"))
+		if ne == nil {
+			isup = false
+			ne = &model.SysUser{}
+			ne.Xid = v.GetString("xid")
+			ne.Name = v.GetString("name")
+		}
+		ne.Pass = v.GetString("pass")
+		ne.Phone = v.GetString("phone")
+		ne.Avat = v.GetString("avat")
+		if tm, ok := v.Get("times").(time.Time); ok {
+			ne.Times = tm
+		}
+		if isup {
+			_, err = comm.Db.Cols("pass", "phone", "avat", "times").Where("id=?", ne.Id).Update(ne)
+		} else {
+			_, err = comm.Db.Insert(ne)
+		}
+		if err != nil {
+			println("MoveTrigger err:" + err.Error())
+			return
+		}
+	}
+}
 func MoveParam() {
 	var olds []*ruisUtil.Map
 	err := dbold.SQL("select * from sys_param").Find(&olds)
