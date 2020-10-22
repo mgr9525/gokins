@@ -49,4 +49,41 @@ function main(){
 }
 `,
 	}
+	HookjsMap["gitlab"] = &Hookjs{
+		Uis: map[string]string{"token": "string", "operate": "array"},
+		js: `
+
+function main(){
+	console.log('start run main function!!!!');
+	var ret={check:false};
+	var conf=getConf();
+	var body=getBody();
+	var tk=getHeader('X-Gitlab-Token');
+	if(conf.token!=tk){
+		ret.errs='触发请求秘钥错误';
+		return ret;
+    }
+	ret.check=true;
+    if(conf.operate&&conf.operate.length>0){
+        ret.check=false;
+        for(var i in conf.operate){
+            var it=conf.operate[i];
+            console.log('operate['+i+']',it);
+            if(it=='push'){
+                if(body.object_kind=='push'){
+                    ret.check=true;
+                    break;
+                }
+            }else if(it=='merged'){
+                if(body.object_kind=='merge_request'&&body.object_attributes&&body.object_attributes.merge_status=='merged'){
+                    ret.check=true;
+                    break;
+                }
+            }
+        }
+    }
+	return ret
+}
+`,
+	}
 }
