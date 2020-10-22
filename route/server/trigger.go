@@ -57,3 +57,7 @@ func TriggerDel(c *gin.Context, req *ruisUtil.Map) {
 	}
 	c.String(200, fmt.Sprintf("%d", m.Id))
 }
+
+func TriggerHooks(c *gin.Context) {
+	c.JSON(200, mgr.HookjsMap)
+}

@@ -27,14 +27,15 @@
       <el-table-column label="描述">
 				<template slot-scope="{row}">
           <span>{{row.Desc}}</span>
-          <p style="color:red" v-if="row.Errs!=''">启动错误：{{row.Errs}}</p>
+          <div><el-tag type="error" v-if="row.Errs!=''">启动错误：{{row.Errs}}</el-tag></div>
+          <div><el-tag type="info" v-if="row.Types == 'hook'">hook地址：/hook/trigger/{{row.Id}}</el-tag></div>
 				</template>
       </el-table-column>
-      <el-table-column prop="Types" label="触发器类型" :formatter="typesFormatter" sortable>
+      <el-table-column prop="Types" label="触发器类型" width="150" :formatter="typesFormatter" sortable>
       </el-table-column>
       <el-table-column prop="Times" label="创建时间" width="200" :formatter="dateFormat" sortable>
       </el-table-column>
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="200">
         <template slot-scope="{row}">
           <el-button-group>
             <el-button size="small" type="warning" @click="$refs.editor.show(row)">编辑</el-button>

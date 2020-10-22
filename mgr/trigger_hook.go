@@ -65,16 +65,15 @@ func (c *trigHookTask) start(pars ...interface{}) error {
 	if c.md == nil {
 		return errors.New("not found model")
 	}
-	js, ok := hookjsMap[c.conf.Plug]
+	js, ok := HookjsMap[c.conf.Plug]
 	if !ok {
 		return errors.New("not found plugin:" + c.conf.Plug)
 	}
-	c.js = js
+	c.js = js.js
 	c.ctx, c.cncl = context.WithCancel(mgrCtx)
 	go func() {
 		defer ruisUtil.Recovers("gorun", nil)
 		c.vm = goja.New()
-		c.initVm()
 		c.tg.Errs = ""
 		err := c.run()
 		if err != nil {
@@ -100,10 +99,12 @@ func (c *trigHookTask) start(pars ...interface{}) error {
 	}()
 	return nil
 }
-func (c *trigHookTask) run() error {
+func (c *trigHookTask) run() (rterr error) {
 	defer ruisUtil.Recovers("RunTask start", func(errs string) {
 		println("trigHookTask run err:" + errs)
+		rterr = errors.New(errs)
 	})
+	c.initVm()
 	rslt, err := c.vm.RunString(c.js)
 	if err != nil {
 		println("vm.RunString err:" + err.Error())
@@ -136,10 +137,9 @@ func (c *trigHookTask) run() error {
 		println("trigHookTask model run id:", rn.Id)
 	} else {
 		errs := rets.GetString("errs")
-		if errs == "" {
-			errs = "插件逻辑返回错误!"
+		if errs != "" {
+			return errors.New(errs)
 		}
-		return errors.New(errs)
 	}
 	return nil
 }

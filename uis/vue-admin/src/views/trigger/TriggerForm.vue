@@ -10,8 +10,8 @@
         </el-form-item>
         <el-form-item label="触发器类型" prop="Types">
           <el-select v-model="formData.Types" placeholder="请选择">
-            <!-- <el-option label="git触发" value="git"></el-option> -->
             <el-option label="定时器触发" value="timer"></el-option>
+            <el-option label="hook触发" value="hook"></el-option>
           </el-select>
 					<el-switch v-model="formData.enable" active-text="激活"></el-switch>
         </el-form-item>
@@ -38,6 +38,22 @@
             type="datetime"
             placeholder="选择日期时间">
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="插件" v-if="formData.Types == 'hook'">
+          <el-select v-model="formTriggerData.plug" placeholder="请选择" @change="plugChange">
+            <el-option
+                v-for="(k,v) in hooks"
+                :key="'hook:'+v"
+                :label="v"
+                :value="v">
+            </el-option>
+          </el-select>
+          <el-tag type="info" v-if="formTriggerData.plug=='gitee'">gitee目前仅支持password方式</el-tag>
+        </el-form-item>
+        <el-form-item label="插件配置(json)" v-if="formData.Types == 'hook'">
+          <el-input type="textarea" v-model="formTriggerData.conf" :rows="8"></el-input>
+          <el-tag type="info" v-if="formTriggerData.plug=='gitee'">password:推送密码,operate:触发流水线操作(push,merged)</el-tag>
+          <div><el-tag type="warning" v-if="formData.Id&&formData.Id!=''&&formData.Id>0">hook请求地址：http://yourhost:port/hook/trigger/{{formData.Id}}</el-tag></div>
         </el-form-item>
       </el-form>
     </el-col>
@@ -74,10 +90,12 @@ export default {
       formData: {},
       formTriggerData: {},
       modelOptions: [],
+      hooks:[]
     }
   },
   mounted() {
     this.getList();
+    this.getHooks();
   },
   methods: {
     changeCron(val){
@@ -99,6 +117,22 @@ export default {
           type: 'error'
         });
       });
+    },getHooks(){
+      this.$post('/trigger/hooks').then((res) => {
+        this.hooks = res.data;
+      }).catch(err => {
+        this.$message({
+          message: err.response.data || '服务器错误',
+          type: 'error'
+        });
+      });
+    },plugChange(e){
+      console.log('plugChange',e);
+      if(!this.formTriggerData.conf||this.formTriggerData.conf==''){
+        if(e=='gitee'){
+          this.formTriggerData.conf='{"password":"pwd","operate":["merged"]}';
+        }
+      }
     },
     show(e) {
       this.formVisible = true;
@@ -111,9 +145,7 @@ export default {
         enable:false
       }
       this.formTriggerData = {
-        mid:'',
-        repeated:'',
-        dates:''
+        mid:''
       }
       if (e){
         this.formData = {
