@@ -27,7 +27,7 @@
       <el-table-column label="描述">
 				<template slot-scope="{row}">
           <span>{{row.Desc}}</span>
-          <div><el-tag type="danger" v-if="row.Errs!=''">启动错误：{{row.Errs}}</el-tag></div>
+          <div><el-tag type="danger" v-if="row.Errs!=''">{{row.Errs}}</el-tag></div>
           <div><el-tag type="info" v-if="row.Types == 'hook'">hook地址：/hook/trigger/{{row.Id}}</el-tag></div>
 				</template>
       </el-table-column>

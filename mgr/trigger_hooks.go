@@ -23,7 +23,7 @@ function main(){
 		return ret;
 	}
 	if(conf.password!=body.password){
-		ret.errs='请求密码错误';
+		ret.errs='触发请求密码错误';
 		return ret;
     }
 	ret.check=true;
