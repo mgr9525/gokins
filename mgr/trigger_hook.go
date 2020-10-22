@@ -165,4 +165,8 @@ func (c *trigHookTask) initVm() {
 	c.vm.Set("getConf", func() interface{} {
 		return c.confs
 	})
+
+	c.vm.Set("encodeSha1", func(body string) string {
+		return ruisUtil.Sha1String(body)
+	})
 }
