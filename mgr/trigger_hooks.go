@@ -58,21 +58,21 @@ function main(){
 }
 `,
 	}
-	/*HookjsMap["github"] = &Hookjs{
-			Uis: map[string]string{"secretkey": "string", "branch": "string"},
+	HookjsMap["github"] = &Hookjs{
+		Uis:  map[string]string{"secretkey": "string", "branch": "string"},
 		Desc: "secretkey:签名秘钥,branch:push对象分支",
 		Defs: `{"secretkey":"pwd","branch":"master"}`,
-			js: `
+		js: `
 
 	function main(){
 		console.log('start run main function!!!!');
 		var ret={check:false};
 		var conf=getConf();
 	    var body=getBody();
+	    var bodys=getBodys();
 		var nm=getHeader('X-GitHub-Event');
 	    var tk=getHeader('X-Hub-Signature');
-	    console.log('sha1',tk,encodeSha1(getBodys()+conf.secretkey));
-		if(tk!=encodeSha1(conf.secretkey+getBodys())){
+		if(verifySignature(tk,conf.password,bodys)){
 			ret.errs='触发请求秘钥错误';
 			return ret;
 	    }
@@ -87,7 +87,7 @@ function main(){
 		return ret
 	}
 	`,
-		}*/
+	}
 	HookjsMap["gitlab"] = &Hookjs{
 		Uis:  map[string]string{"token": "string", "branch": "string"},
 		Desc: "token:秘钥,branch:push对象分支",
