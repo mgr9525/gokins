@@ -16,7 +16,7 @@ var dbold *xorm.Engine
 
 func MoveModels() {
 	var olds []*ruisUtil.Map
-	err := dbold.SQL("select * from t_model").Find(&olds)
+	err := dbold.SQL("select * from t_model").Where("del!=1").Find(&olds)
 	if err != nil {
 		fmt.Println("find model err:" + err.Error())
 		return
@@ -54,7 +54,7 @@ func MoveModels() {
 
 func mvPlugin(tid int64, md *model.TModel) {
 	var olds []*ruisUtil.Map
-	err := dbold.SQL("select * from t_plugin where tid=?", tid).Find(&olds)
+	err := dbold.SQL("select * from t_plugin where tid=?", tid).Where("del!=1").Find(&olds)
 	if err != nil {
 		println("find model err:" + err.Error())
 		return
@@ -98,16 +98,14 @@ func mvPlugin(tid int64, md *model.TModel) {
 
 func MoveTrigger() {
 	var olds []*ruisUtil.Map
-	err := dbold.SQL("select * from t_trigger").Find(&olds)
+	err := dbold.SQL("select * from t_trigger").Where("del!=1").Find(&olds)
 	if err != nil {
 		//fmt.Println("find trigger err:" + err.Error())
 		return
 	}
 	for _, v := range olds {
-		/*id, err := v.GetInt("id")
-		if err != nil {
-			continue
-		}*/
+		mid, _ := v.GetInt("mid")
+		meid, _ := v.GetInt("meid")
 		del, err := v.GetInt("del")
 		if err != nil {
 			continue
@@ -125,6 +123,8 @@ func MoveTrigger() {
 		ne.Del = int(del)
 		ne.Enable = int(enable)
 		ne.Errs = v.GetString("errs")
+		ne.Mid = int(mid)
+		ne.Meid = int(meid)
 		if tm, ok := v.Get("times").(time.Time); ok {
 			ne.Times = tm
 		}

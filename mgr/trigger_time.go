@@ -14,7 +14,6 @@ import (
 )
 
 type confTimeBean struct {
-	Mid      int       `json:"mid"`
 	Repeated string    `json:"repeated"`
 	Dates    string    `json:"dates"`
 	Date     time.Time `json:"-"`
@@ -43,7 +42,7 @@ func (c *trigTimeTask) start(pars ...interface{}) error {
 	}
 	c.conf.Date = tms.Local()
 	println(fmt.Sprintf("%d-%d-%d %d:%d:%d", c.conf.Date.Year(), c.conf.Date.Month(), c.conf.Date.Day(), c.conf.Date.Hour(), c.conf.Date.Minute(), c.conf.Date.Second()))
-	c.md = dbService.GetModel(c.conf.Mid)
+	c.md = dbService.GetModel(c.tg.Mid)
 	if c.md == nil {
 		return errors.New("not found model")
 	}

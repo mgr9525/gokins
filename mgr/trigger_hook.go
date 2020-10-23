@@ -17,7 +17,6 @@ import (
 )
 
 type confHookBean struct {
-	Mid  int    `json:"mid"`
 	Plug string `json:"plug"`
 	Conf string `json:"conf"`
 }
@@ -49,6 +48,9 @@ func (c *trigHookTask) isRun() bool {
 	return c.cncl == nil
 }
 func (c *trigHookTask) start(pars ...interface{}) error {
+	if c.tg == nil || c.cncl != nil {
+		return errors.New("already run")
+	}
 	if len(pars) < 3 {
 		return errors.New("param err")
 	}
@@ -61,7 +63,7 @@ func (c *trigHookTask) start(pars ...interface{}) error {
 		return err
 	}
 	c.confs = ruisUtil.NewMapo(c.conf.Conf)
-	c.md = dbService.GetModel(c.conf.Mid)
+	c.md = dbService.GetModel(c.tg.Mid)
 	if c.md == nil {
 		return errors.New("not found model")
 	}

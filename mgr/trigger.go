@@ -65,7 +65,7 @@ func (c *triggerManager) runRfs() {
 	}
 	c.tmRfs = time.Now()
 	var ls []*model.TTrigger
-	// 目前只有timer需要Task
+	// 目前只有timer需要自动Task
 	err := comm.Db.Where("del!=1 and enable=1").And("types='timer'").Find(&ls)
 	if err != nil {
 		println("triggerManager err:" + err.Error())
@@ -102,6 +102,8 @@ func (c *triggerManager) StartOne(trg *model.TTrigger, pars ...interface{}) {
 		i = &trigTimeTask{tg: trg}
 	case "hook":
 		i = &trigHookTask{tg: trg}
+	case "worked":
+		i = &trigWorkedTask{tg: trg}
 	}
 	if i == nil {
 		return

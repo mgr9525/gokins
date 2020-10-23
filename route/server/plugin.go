@@ -85,7 +85,7 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	res.Set("tid", mr.Tid)
 	res.Set("state", mr.State)
 	res.Set("errs", mr.Errs)
-	res.Set("end", mr.State >= 2)
+	res.Set("end", mr.State != 0 && mr.State != 1)
 	c.JSON(200, res)
 }
 func PlugLog(c *gin.Context, req *ruisUtil.Map) {

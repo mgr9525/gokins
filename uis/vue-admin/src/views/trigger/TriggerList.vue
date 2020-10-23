@@ -22,7 +22,12 @@
       </el-table-column> -->
       <el-table-column type="index" width="60">
       </el-table-column>
-      <el-table-column label="名称" prop="Title" width="250" sortable>
+      <el-table-column label="名称" width="250">
+				<template slot-scope="{row}">
+          {{row.Title}}
+          <el-tag size="mini" type="success" v-if="row.Enable==1">已激活</el-tag>
+          <el-tag size="mini" type="danger" v-else>未激活</el-tag>
+				</template>
       </el-table-column>
       <el-table-column label="描述">
 				<template slot-scope="{row}">
@@ -31,7 +36,10 @@
           <div><el-tag type="info" v-if="row.Types == 'hook'">hook地址：/hook/trigger/{{row.Id}}</el-tag></div>
 				</template>
       </el-table-column>
-      <el-table-column prop="Types" label="触发器类型" width="150" :formatter="typesFormatter" sortable>
+      <el-table-column prop="Types" label="触发器类型" width="150" :formatter="typesFormatter">
+				<template slot-scope="{row}">
+          {{getTypes(row.Types)}}
+				</template>
       </el-table-column>
       <el-table-column prop="Times" label="创建时间" width="200" :formatter="dateFormat" sortable>
       </el-table-column>
@@ -118,17 +126,13 @@ export default {
           type: 'error'
         });
       });
-    }, batchRemove() {
-
-    },
-    typesFormatter: function (row, column) {
-      let typ=row.Types == 'git' ? "git" : row.Types == 'timer' ? "定时器" : "手动";
-      if(row.Enable==1){
-        typ+='(已激活)';
-      }else{
-        typ+='(未激活)';
+    }, getTypes(typ) {
+      switch(typ){
+        case "timer":return "定时器";
+        case "hook":return "hook";
+        case "worked":return "流水线结束";
+        default:return typ;
       }
-      return typ;
     },
     dateFormat: function (row, column) {
       var t = new Date(row.Times);//row 表示一行数据, updateTime 表示要格式化的字段名称

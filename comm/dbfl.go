@@ -13,7 +13,7 @@ const sqls = `
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 21/10/2020 21:25:57
+ Date: 23/10/2020 20:25:46
 */
 
 PRAGMA foreign_keys = false;
@@ -182,6 +182,11 @@ CREATE TABLE "t_trigger" (
   "del" integer DEFAULT 0,
   "enable" integer DEFAULT 0,
   "errs" text,
+  "mid" integer,
+  "meid" integer,
+  "opt1" text,
+  "opt2" text,
+  "opt3" text,
   PRIMARY KEY ("id")
 );
 

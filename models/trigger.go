@@ -16,6 +16,8 @@ type Trigger struct {
 	Config string //配置详情json
 	Enable int
 	Errs   string
+	Mid    int
+	Meid   int
 }
 
 func (Trigger) TableName() string {
@@ -25,7 +27,8 @@ func (Trigger) TableName() string {
 func (c *Trigger) Save() error {
 	var err error
 	if c.Id > 0 {
-		_, err = comm.Db.Cols("types", "name", "desc", "config", "enable").Where("id=?", c.Id).Update(c)
+		_, err = comm.Db.Cols("types", "name", "desc", "config", "enable", "mid", "meid").
+			Where("id=?", c.Id).Update(c)
 	} else {
 		c.Times = time.Now()
 		_, err = comm.Db.Insert(c)

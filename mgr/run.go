@@ -37,7 +37,10 @@ func (c *RunTask) start() {
 		return
 	}
 	c.ctx, c.cncl = context.WithCancel(mgrCtx)
-	go c.run()
+	go func() {
+		c.run()
+		c.cncl = nil
+	}()
 }
 
 func (c *RunTask) run() {
@@ -186,14 +189,24 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 	return rn, nil
 }
 func (c *RunTask) end(stat int, errs string) {
-	c.stop()
-	v := &model.TModelRun{}
-	v.State = stat
-	v.Errs = errs
-	v.Timesd = time.Now()
-	_, err := comm.Db.Cols("state", "errs", "timesd").Where("id=?", c.Mr.Id).Update(v)
+	defer c.stop()
+	c.Mr.State = stat
+	c.Mr.Errs = errs
+	c.Mr.Timesd = time.Now()
+	_, err := comm.Db.Cols("state", "errs", "timesd").Where("id=?", c.Mr.Id).Update(c.Mr)
 	if err != nil {
 		println("db err:", err.Error())
+		return
+	}
+
+	var ls []*model.TTrigger
+	err = comm.Db.Where("del!=1 and enable=1 and meid=?", c.Md.Id).Find(&ls)
+	if err != nil {
+		println("db err:", err.Error())
+		return
+	}
+	for _, v := range ls {
+		TriggerMgr.StartOne(v, c.Md, c.Mr)
 	}
 }
 

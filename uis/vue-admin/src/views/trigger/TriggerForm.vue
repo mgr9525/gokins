@@ -12,11 +12,23 @@
           <el-select v-model="formData.Types" placeholder="请选择">
             <el-option label="定时器触发" value="timer"></el-option>
             <el-option label="hook触发" value="hook"></el-option>
+            <el-option label="流水线结束执行" value="worked"></el-option>
           </el-select>
 					<el-switch v-model="formData.enable" active-text="激活"></el-switch>
         </el-form-item>
-        <el-form-item label="流水线">
-          <el-select v-model="formTriggerData.mid" placeholder="请选择">
+        <el-form-item label="结束流水线" v-if="formData.Types == 'worked'">
+          <el-select v-model="formData.Meid" placeholder="请选择">
+            <el-option
+                v-for="item in modelOptions"
+                :key="item.Id"
+                :label="item.Title"
+                :value="item.Id">
+            </el-option>
+          </el-select>
+					<el-switch v-model="formTriggerData.forced" active-text="不管成功与否都触发"></el-switch>
+        </el-form-item>
+        <el-form-item label="触发流水线" prop="Mid">
+          <el-select v-model="formData.Mid" placeholder="请选择">
             <el-option
                 v-for="item in modelOptions"
                 :key="item.Id"
@@ -84,6 +96,8 @@ export default {
           {required: true, message: '请输入参数'}
         ],Types: [
           {required: true, message: '请输入参数'}
+        ],Mid: [
+          {required: true, message: '请输入参数'}
         ]
       },
       //新增界面数据
@@ -142,11 +156,11 @@ export default {
         Desc: '',
         Types: '',
         Config: '',
-        enable:false
+        enable:false,
+        Mid:'',
+        Meid:''
       }
-      this.formTriggerData = {
-        mid:''
-      }
+      this.formTriggerData = {}
       if (e){
         this.formData = {
           Id: e.Id,
@@ -154,7 +168,9 @@ export default {
           Desc: e.Desc,
           Types: e.Types,
           Config: e.Config,
-          enable:e.Enable==1
+          enable:e.Enable==1,
+          Mid:e.Mid,
+          Meid:e.Meid
         }
         try{
         var res = JSON.parse(e.Config);
@@ -187,12 +203,30 @@ export default {
         if (valid) {
           if(this.formData.Types=='timer'){
             console.log('formTriggerData:',this.formTriggerData);
-            if(this.formTriggerData.repeated==''){
+            if(!this.formTriggerData.repeated&&this.formTriggerData.repeated==''){
               this.$message('请选择重复类型');
               return
             }
-            if(this.formTriggerData.dates==''){
+            if(!this.formTriggerData.dates&&this.formTriggerData.dates==''){
               this.$message('请选择日期');
+              return
+            }
+          }
+          if(this.formData.Types=='hook'){
+            console.log('formTriggerData:',this.formTriggerData);
+            if(!this.formTriggerData.plug||this.formTriggerData.plug==''){
+              this.$message('请选择插件');
+              return
+            }
+          }
+          if(this.formData.Types=='worked'){
+            console.log('formTriggerData:',this.formTriggerData);
+            if(!this.formData.Meid||this.formData.Meid==''){
+              this.$message('请选择结束流水线');
+              return
+            }
+            if(this.formData.Mid==this.formData.Meid){
+              this.$message('两个流水线不能相等');
               return
             }
           }

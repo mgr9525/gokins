@@ -61,7 +61,7 @@
 			</el-table-column>
 			<el-table-column label="操作" width="100">
 				<template scope="{row}">
-					<el-button type="danger" size="small" @click="handleDel(row)" v-if="row.State==0||row.State==1">停止</el-button>
+					<el-button type="danger" size="small" @click="handleStop(row.Id)" v-if="row.State==0||row.State==1">停止</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -143,8 +143,15 @@ import ModelForm from './ModelForm'
 				});
 			},handleEdit(){
 
-			},handleDel(){
-
+			},handleStop(id){
+				this.$post('/model/stop',{id:id}).then(res=>{
+					this.$message('操作成功');
+				}).catch(err=>{
+					this.$message({
+						message: err.response?err.response.data||'服务器错误':'网络错误',
+						type: 'error'
+					});
+				});
 			},batchRemove(){
 
 			}
