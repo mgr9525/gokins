@@ -13,4 +13,6 @@ type TTrigger struct {
 	Del    int
 	Enable int
 	Errs   string
+	Mid    int
+	Meid   int
 }

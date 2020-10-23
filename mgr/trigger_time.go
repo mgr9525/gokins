@@ -14,7 +14,6 @@ import (
 )
 
 type confTimeBean struct {
-	Mid      int       `json:"mid"`
 	Repeated string    `json:"repeated"`
 	Dates    string    `json:"dates"`
 	Date     time.Time `json:"-"`
@@ -28,7 +27,7 @@ type trigTimeTask struct {
 	runtm time.Time
 }
 
-func (c *trigTimeTask) start() error {
+func (c *trigTimeTask) start(pars ...interface{}) error {
 	if c.tg == nil || c.cncl != nil {
 		return errors.New("already run")
 	}
@@ -43,7 +42,7 @@ func (c *trigTimeTask) start() error {
 	}
 	c.conf.Date = tms.Local()
 	println(fmt.Sprintf("%d-%d-%d %d:%d:%d", c.conf.Date.Year(), c.conf.Date.Month(), c.conf.Date.Day(), c.conf.Date.Hour(), c.conf.Date.Minute(), c.conf.Date.Second()))
-	c.md = dbService.GetModel(c.conf.Mid)
+	c.md = dbService.GetModel(c.tg.Mid)
 	if c.md == nil {
 		return errors.New("not found model")
 	}
@@ -59,6 +58,7 @@ func (c *trigTimeTask) start() error {
 			}
 		}
 	end:
+		c.cncl = nil
 		println("ctx end!")
 	}()
 	return nil
@@ -105,7 +105,8 @@ func (c *trigTimeTask) run() {
 		rn.Tid = c.md.Id
 		rn.Uid = c.tg.Uid
 		rn.Times = time.Now()
-		rn.Tgtyp = "timer"
+		rn.Tgid = c.tg.Id
+		rn.Tgtyps = "定时器触发"
 		comm.Db.Insert(rn)
 		ExecMgr.Refresh()
 		println("trigTimeTask model run id:", rn.Id)

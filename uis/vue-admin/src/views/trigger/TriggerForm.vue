@@ -10,13 +10,25 @@
         </el-form-item>
         <el-form-item label="触发器类型" prop="Types">
           <el-select v-model="formData.Types" placeholder="请选择">
-            <!-- <el-option label="git触发" value="git"></el-option> -->
             <el-option label="定时器触发" value="timer"></el-option>
+            <el-option label="hook触发" value="hook"></el-option>
+            <el-option label="流水线结束执行" value="worked"></el-option>
           </el-select>
 					<el-switch v-model="formData.enable" active-text="激活"></el-switch>
         </el-form-item>
-        <el-form-item label="流水线">
-          <el-select v-model="formTriggerData.mid" placeholder="请选择">
+        <el-form-item label="结束流水线" v-if="formData.Types == 'worked'">
+          <el-select v-model="formData.Meid" placeholder="请选择">
+            <el-option
+                v-for="item in modelOptions"
+                :key="item.Id"
+                :label="item.Title"
+                :value="item.Id">
+            </el-option>
+          </el-select>
+					<el-switch v-model="formTriggerData.forced" active-text="不管成功与否都触发"></el-switch>
+        </el-form-item>
+        <el-form-item label="触发流水线" prop="Mid">
+          <el-select v-model="formData.Mid" placeholder="请选择">
             <el-option
                 v-for="item in modelOptions"
                 :key="item.Id"
@@ -38,6 +50,22 @@
             type="datetime"
             placeholder="选择日期时间">
           </el-date-picker>
+        </el-form-item>
+        <el-form-item label="插件" v-if="formData.Types == 'hook'">
+          <el-select v-model="formTriggerData.plug" placeholder="请选择" @change="plugChange">
+            <el-option
+                v-for="(k,v) in hooks"
+                :key="'hook:'+v"
+                :label="v"
+                :value="v">
+            </el-option>
+          </el-select>
+          <el-tag type="info" v-if="formTriggerData.plug=='gitee'">gitee目前仅支持password方式</el-tag>
+        </el-form-item>
+        <el-form-item label="插件配置(json)" v-if="formData.Types == 'hook'">
+          <el-input type="textarea" v-model="formTriggerData.conf" :rows="8"></el-input>
+          <el-tag type="info">{{formTriggerData.plug&&hooks[formTriggerData.plug]?hooks[formTriggerData.plug].Desc:''}}</el-tag>
+          <div><el-tag type="warning" v-if="formData.Id&&formData.Id!=''&&formData.Id>0">hook请求地址：http://yourhost:port/hook/trigger/{{formData.Id}}</el-tag></div>
         </el-form-item>
       </el-form>
     </el-col>
@@ -68,16 +96,20 @@ export default {
           {required: true, message: '请输入参数'}
         ],Types: [
           {required: true, message: '请输入参数'}
+        ],Mid: [
+          {required: true, message: '请输入参数'}
         ]
       },
       //新增界面数据
       formData: {},
       formTriggerData: {},
       modelOptions: [],
+      hooks:[],
     }
   },
   mounted() {
     this.getList();
+    this.getHooks();
   },
   methods: {
     changeCron(val){
@@ -99,6 +131,22 @@ export default {
           type: 'error'
         });
       });
+    },getHooks(){
+      this.$post('/trigger/hooks').then((res) => {
+        this.hooks = res.data;
+      }).catch(err => {
+        this.$message({
+          message: err.response.data || '服务器错误',
+          type: 'error'
+        });
+      });
+    },plugChange(e){
+      console.log('plugChange',e);
+      // if(!this.formTriggerData.conf||this.formTriggerData.conf==''){
+        if(this.formTriggerData.plug&&this.hooks[this.formTriggerData.plug]){
+          this.$set(this.formTriggerData,"conf",this.hooks[this.formTriggerData.plug].Defs);
+        }
+      // }
     },
     show(e) {
       this.formVisible = true;
@@ -108,13 +156,11 @@ export default {
         Desc: '',
         Types: '',
         Config: '',
-        enable:false
+        enable:false,
+        Mid:'',
+        Meid:''
       }
-      this.formTriggerData = {
-        mid:'',
-        repeated:'',
-        dates:''
-      }
+      this.formTriggerData = {}
       if (e){
         this.formData = {
           Id: e.Id,
@@ -122,7 +168,9 @@ export default {
           Desc: e.Desc,
           Types: e.Types,
           Config: e.Config,
-          enable:e.Enable==1
+          enable:e.Enable==1,
+          Mid:e.Mid,
+          Meid:e.Meid
         }
         try{
         var res = JSON.parse(e.Config);
@@ -155,12 +203,30 @@ export default {
         if (valid) {
           if(this.formData.Types=='timer'){
             console.log('formTriggerData:',this.formTriggerData);
-            if(this.formTriggerData.repeated==''){
+            if(!this.formTriggerData.repeated&&this.formTriggerData.repeated==''){
               this.$message('请选择重复类型');
               return
             }
-            if(this.formTriggerData.dates==''){
+            if(!this.formTriggerData.dates&&this.formTriggerData.dates==''){
               this.$message('请选择日期');
+              return
+            }
+          }
+          if(this.formData.Types=='hook'){
+            console.log('formTriggerData:',this.formTriggerData);
+            if(!this.formTriggerData.plug||this.formTriggerData.plug==''){
+              this.$message('请选择插件');
+              return
+            }
+          }
+          if(this.formData.Types=='worked'){
+            console.log('formTriggerData:',this.formTriggerData);
+            if(!this.formData.Meid||this.formData.Meid==''){
+              this.$message('请选择结束流水线');
+              return
+            }
+            if(this.formData.Mid==this.formData.Meid){
+              this.$message('两个流水线不能相等');
               return
             }
           }

@@ -64,6 +64,8 @@ func MoveData(pth string) {
 		return
 	}
 	dbold = db
+	MoveUser()
+	MoveParam()
 	MoveModels()
 	MoveTrigger()
 

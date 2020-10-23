@@ -4,6 +4,7 @@
 		<el-col :span="24" class="toolbar" style="padding-bottom: 0px;">
 					<el-button type="warning" @click="$router.back(-1)">返回</el-button>
 					<el-button type="primary" @click="getList">刷新</el-button>
+					<el-button type="danger" @click="handleStop" v-if="mrstat==0||mrstat==1">停止</el-button>
 		</el-col>
 		<el-card class="box-card" style="margin-bottom:20px">
 		<el-row class="text item infoItem">
@@ -166,6 +167,15 @@
 						this.logs[selid]=res.data;
 					this.$forceUpdate();
 				})
+			},handleStop(){
+				this.$post('/model/stop',{id:this.tid}).then(res=>{
+					this.$message('操作成功');
+				}).catch(err=>{
+					this.$message({
+						message: err.response?err.response.data||'服务器错误':'网络错误',
+						type: 'error'
+					});
+				});
 			}
 		}
 	}

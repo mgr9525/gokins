@@ -12,7 +12,7 @@
 					<el-input v-model="formData.Wrkdir" auto-complete="off"></el-input>
 				</el-form-item>
 				<el-form-item label="目录问题">
-					<el-switch v-model="formData.clrdir" active-text="创建或清空运行目录"></el-switch>
+					<el-switch v-model="formData.clrdir" active-text="创建并清空运行目录"></el-switch>
 				</el-form-item>
 				<el-form-item label="环境变量">
 					<el-input type="textarea" v-model="formData.Envs" auto-complete="off" :rows="8" placeholder="每行一个变量,格式：name=xxxx"></el-input>

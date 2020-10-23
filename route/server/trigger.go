@@ -34,6 +34,10 @@ func TriggerEdit(c *gin.Context, req *models.Trigger) {
 		c.String(500, "param err")
 		return
 	}
+	if req.Types == "worked" && req.Mid == req.Meid {
+		c.String(500, "两个流水线不能相等")
+		return
+	}
 	lgusr := utilService.CurrMUser(c)
 	req.Uid = lgusr.Xid
 	if err := req.Save(); err != nil {
@@ -56,4 +60,8 @@ func TriggerDel(c *gin.Context, req *ruisUtil.Map) {
 		return
 	}
 	c.String(200, fmt.Sprintf("%d", m.Id))
+}
+
+func TriggerHooks(c *gin.Context) {
+	c.JSON(200, mgr.HookjsMap)
 }

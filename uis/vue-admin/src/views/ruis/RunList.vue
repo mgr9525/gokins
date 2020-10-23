@@ -37,11 +37,9 @@
 					#{{row.Id}}</el-link>
 				</template>
 			</el-table-column>
-			<el-table-column label="触发" width="110">
+			<el-table-column label="触发" width="120">
 				<template slot-scope="{row}">
-					<el-tag v-if="row.Tgtyp=='git'">git触发</el-tag>
-					<el-tag v-else-if="row.Tgtyp=='timer'">定时器触发</el-tag>
-					<el-tag v-else>手动执行</el-tag>
+					<el-tag>{{row.Tgtyps}}</el-tag>
 				</template>
 			</el-table-column>
 			<el-table-column prop="Times1" label="运行时间" width="200" sortable>
@@ -63,7 +61,7 @@
 			</el-table-column>
 			<el-table-column label="操作" width="100">
 				<template scope="{row}">
-					<el-button type="danger" size="small" @click="handleDel(row)" v-if="row.State==0||row.State==1">停止</el-button>
+					<el-button type="danger" size="small" @click="handleStop(row.Id)" v-if="row.State==0||row.State==1">停止</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -145,8 +143,15 @@ import ModelForm from './ModelForm'
 				});
 			},handleEdit(){
 
-			},handleDel(){
-
+			},handleStop(id){
+				this.$post('/model/stop',{id:id}).then(res=>{
+					this.$message('操作成功');
+				}).catch(err=>{
+					this.$message({
+						message: err.response?err.response.data||'服务器错误':'网络错误',
+						type: 'error'
+					});
+				});
 			},batchRemove(){
 
 			}
