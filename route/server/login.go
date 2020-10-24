@@ -46,20 +46,20 @@ func Login(c *gin.Context, req *ruisUtil.Map) {
 		c.String(511, "未找到用户!")
 		return
 	}
+
+	isin := false
 	tms, ok := mplgtms[usr.Xid]
-	if ok && time.Since(tms.lgtm).Minutes() < 10 {
+	if ok && time.Since(tms.lgtm).Minutes() <= 10 {
+		isin = true
 		if tms.times >= 2 {
 			c.String(521, "失败次数太多，十分钟后再试!")
 			return
 		}
 	}
 	if usr.Pass != ruisUtil.Md5String(pass) {
-		if ok {
+		if isin {
 			tms.times++
-			tms.lgtm = time.Now()
-			if tms.times > 2 {
-				tms.times = 1
-			}
+			//tms.lgtm = time.Now()
 		} else {
 			mplgtms[usr.Xid] = &lgTimes{
 				times: 0,
