@@ -70,7 +70,7 @@ func (c *trigTimeTask) stop() {
 	}
 }
 func (c *trigTimeTask) isRun() bool {
-	return c.cncl == nil
+	return c.cncl != nil
 }
 func (c *trigTimeTask) run() {
 	defer ruisUtil.Recovers("RunTask start", func(errs string) {

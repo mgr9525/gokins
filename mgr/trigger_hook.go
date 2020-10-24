@@ -2,6 +2,9 @@ package mgr
 
 import (
 	"context"
+	"crypto/hmac"
+	"crypto/sha1"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -9,6 +12,8 @@ import (
 	"gokins/model"
 	"gokins/service/dbService"
 	"net/http"
+	"net/url"
+	"strings"
 	"time"
 
 	"github.com/dop251/goja"
@@ -45,7 +50,7 @@ func (c *trigHookTask) stop() {
 	}
 }
 func (c *trigHookTask) isRun() bool {
-	return c.cncl == nil
+	return c.cncl != nil
 }
 func (c *trigHookTask) start(pars ...interface{}) error {
 	if c.tg == nil || c.cncl != nil {
@@ -145,6 +150,7 @@ func (c *trigHookTask) run() (rterr error) {
 	}
 	return nil
 }
+
 func (c *trigHookTask) initVm() {
 	csl := c.vm.NewObject()
 	c.vm.Set("console", csl)
@@ -160,6 +166,10 @@ func (c *trigHookTask) initVm() {
 	})
 	c.vm.Set("getBody", func() interface{} {
 		if c.body == nil {
+			if c.conf.Plug == "github" {
+				unescape, _ := url.QueryUnescape(string(c.bodys)[8:])
+				c.bodys = []byte(unescape)
+			}
 			c.body = ruisUtil.NewMapo(c.bodys)
 		}
 		return c.body
@@ -171,4 +181,29 @@ func (c *trigHookTask) initVm() {
 	c.vm.Set("encodeSha1", func(body string) string {
 		return ruisUtil.Sha1String(body)
 	})
+
+	c.vm.Set("verifySignature", func(secret string, signature string, body []byte) bool {
+		return verifySignature([]byte(secret), signature, body)
+	})
+
+}
+func signBody(secret, body []byte) []byte {
+	computed := hmac.New(sha1.New, secret)
+	computed.Write(body)
+	return []byte(computed.Sum(nil))
+}
+
+func verifySignature(secret []byte, signature string, body []byte) bool {
+
+	const signaturePrefix = "sha1="
+	const signatureLength = 45 // len(SignaturePrefix) + len(hex(sha1))
+
+	if len(signature) != signatureLength || !strings.HasPrefix(signature, signaturePrefix) {
+		return false
+	}
+
+	actual := make([]byte, 20)
+	hex.Decode(actual, []byte(signature[5:]))
+
+	return hmac.Equal(signBody(secret, body), actual)
 }
