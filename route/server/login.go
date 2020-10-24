@@ -27,6 +27,13 @@ func LoginInfo(c *gin.Context) {
 	c.JSON(200, rets)
 }
 
+type lgTimes struct {
+	times int
+	lgtm  time.Time
+}
+
+var mplgtms = make(map[string]*lgTimes)
+
 func Login(c *gin.Context, req *ruisUtil.Map) {
 	name := req.GetString("name")
 	pass := req.GetString("pass")
@@ -39,10 +46,30 @@ func Login(c *gin.Context, req *ruisUtil.Map) {
 		c.String(511, "未找到用户!")
 		return
 	}
+	tms, ok := mplgtms[usr.Xid]
+	if ok && time.Since(tms.lgtm).Minutes() < 10 {
+		if tms.times >= 2 {
+			c.String(521, "失败次数太多，十分钟后再试!")
+			return
+		}
+	}
 	if usr.Pass != ruisUtil.Md5String(pass) {
+		if ok {
+			tms.times++
+			tms.lgtm = time.Now()
+			if tms.times > 2 {
+				tms.times = 1
+			}
+		} else {
+			mplgtms[usr.Xid] = &lgTimes{
+				times: 0,
+				lgtm:  time.Now(),
+			}
+		}
 		c.String(512, "密码错误!")
 		return
 	}
+	delete(mplgtms, usr.Xid)
 
 	tks, err := core.CreateToken(&jwt.MapClaims{
 		"xid": usr.Xid,

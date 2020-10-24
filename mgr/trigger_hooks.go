@@ -59,9 +59,9 @@ function main(){
 `,
 	}
 	HookjsMap["github"] = &Hookjs{
-		Uis:  map[string]string{"secretkey": "string", "branch": "string"},
-		Desc: "secretkey:签名秘钥,branch:push对象分支",
-		Defs: `{"secretkey":"pwd","branch":"master"}`,
+		Uis:  map[string]string{"password": "string", "branch": "string"},
+		Desc: "password:签名秘钥,branch:push对象分支",
+		Defs: `{"password":"pwd","branch":"master"}`,
 		js: `
 
 	function main(){
