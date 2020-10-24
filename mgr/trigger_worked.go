@@ -64,7 +64,7 @@ func (c *trigWorkedTask) stop() {
 	}
 }
 func (c *trigWorkedTask) isRun() bool {
-	return c.cncl == nil
+	return c.cncl != nil
 }
 func (c *trigWorkedTask) run() error {
 	defer ruisUtil.Recovers("RunTask start", func(errs string) {

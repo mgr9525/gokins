@@ -50,7 +50,7 @@ func (c *trigHookTask) stop() {
 	}
 }
 func (c *trigHookTask) isRun() bool {
-	return c.cncl == nil
+	return c.cncl != nil
 }
 func (c *trigHookTask) start(pars ...interface{}) error {
 	if c.tg == nil || c.cncl != nil {
