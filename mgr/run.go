@@ -173,18 +173,16 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 	rn.State = 4
 	if err != nil {
 		println("cmd.run err:" + err.Error())
-		rn.State = 2
-		return rn, err
+		// rn.State = 2
+		// return rn, err
 	}
 	fmt.Println(fmt.Sprintf("cmdRun(%s)dir:%s", pgn.Title, cmd.Dir))
 	if cmd.ProcessState != nil {
 		rn.Excode = cmd.ProcessState.ExitCode()
 	}
-	if rn.Excode != 0 {
+	if pgn.Exend == 1 && (err != nil || rn.Excode != 0) {
 		rn.State = 2
-		if pgn.Exend == 1 {
-			return rn, fmt.Errorf("程序执行错误：%d", rn.Excode)
-		}
+		return rn, fmt.Errorf("程序执行错误(exit:%d)：%+v", rn.Excode, err)
 	}
 	return rn, nil
 }
