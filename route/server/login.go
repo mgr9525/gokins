@@ -115,6 +115,10 @@ func Install(c *gin.Context, req *ruisUtil.Map) {
 }
 
 func Uppass(c *gin.Context, req *ruisUtil.Map) {
+	if comm.NoUppass {
+		c.String(511, "管理员禁止修改密码!")
+		return
+	}
 	pass := req.GetString("pass")
 	newpass := req.GetString("newpass")
 	if pass == "" || newpass == "" {
