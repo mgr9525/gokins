@@ -51,18 +51,18 @@ func (c *RunTask) run() {
 			if c.Md.Clrdir == 1 {
 				err := rmDirFiles(c.Md.Wrkdir)
 				if err != nil {
-					c.end(2, "运行目录创建失败:"+err.Error())
+					c.end(2, "工作目录创建失败:"+err.Error())
 					return
 				}
 			}
 		} else {
-			if c.Md.Clrdir != 1 {
-				c.end(2, "运行目录不存在")
+			/*if c.Md.Clrdir != 1 {
+				c.end(2, "工作目录不存在")
 				return
-			}
+			}*/
 			err := os.MkdirAll(c.Md.Wrkdir, 0755)
 			if err != nil {
-				c.end(2, "运行目录创建失败:"+err.Error())
+				c.end(2, "工作目录创建失败:"+err.Error())
 				return
 			}
 		}
@@ -159,32 +159,34 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 			if regPATH.MatchString(s) {
 				noPath = false
 				envs[i] = strings.ReplaceAll(s, "$PATH", os.Getenv("PATH"))
+				envs[i] = strings.ReplaceAll(s, "${PATH}", os.Getenv("PATH"))
 			}
 		}
 		if noPath {
 			envs = append(envs, "PATH="+os.Getenv("PATH"))
 		}
+		envs = append(envs, "WORKDIR="+c.Md.Wrkdir)
 		cmd.Env = envs
 	}
 	if c.Md.Wrkdir != "" {
 		cmd.Dir = c.Md.Wrkdir
+	} else if comm.Dir != "" {
+		cmd.Dir = comm.Dir
 	}
 	err = cmd.Run()
 	rn.State = 4
 	if err != nil {
 		println("cmd.run err:" + err.Error())
-		rn.State = 2
-		return rn, err
+		// rn.State = 2
+		// return rn, err
 	}
 	fmt.Println(fmt.Sprintf("cmdRun(%s)dir:%s", pgn.Title, cmd.Dir))
 	if cmd.ProcessState != nil {
 		rn.Excode = cmd.ProcessState.ExitCode()
 	}
-	if rn.Excode != 0 {
+	if pgn.Exend == 1 && (err != nil || rn.Excode != 0) {
 		rn.State = 2
-		if pgn.Exend == 1 {
-			return rn, fmt.Errorf("程序执行错误：%d", rn.Excode)
-		}
+		return rn, fmt.Errorf("程序执行错误(exit:%d)：%+v", rn.Excode, err)
 	}
 	return rn, nil
 }

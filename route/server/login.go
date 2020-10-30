@@ -3,6 +3,7 @@ package server
 import (
 	"gokins/comm"
 	"gokins/core"
+	"gokins/model"
 	"gokins/service/dbService"
 	"gokins/service/utilService"
 	"time"
@@ -27,6 +28,13 @@ func LoginInfo(c *gin.Context) {
 	c.JSON(200, rets)
 }
 
+type lgTimes struct {
+	times int
+	lgtm  time.Time
+}
+
+var mplgtms = make(map[string]*lgTimes)
+
 func Login(c *gin.Context, req *ruisUtil.Map) {
 	name := req.GetString("name")
 	pass := req.GetString("pass")
@@ -39,10 +47,30 @@ func Login(c *gin.Context, req *ruisUtil.Map) {
 		c.String(511, "未找到用户!")
 		return
 	}
+
+	isin := false
+	tms, ok := mplgtms[usr.Xid]
+	if ok && time.Since(tms.lgtm).Minutes() <= 10 {
+		isin = true
+		if tms.times >= 2 {
+			c.String(521, "失败次数太多，十分钟后再试!")
+			return
+		}
+	}
 	if usr.Pass != ruisUtil.Md5String(pass) {
+		if isin {
+			tms.times++
+			//tms.lgtm = time.Now()
+		} else {
+			mplgtms[usr.Xid] = &lgTimes{
+				times: 0,
+				lgtm:  time.Now(),
+			}
+		}
 		c.String(512, "密码错误!")
 		return
 	}
+	delete(mplgtms, usr.Xid)
 
 	tks, err := core.CreateToken(&jwt.MapClaims{
 		"xid": usr.Xid,
@@ -60,17 +88,27 @@ func Install(c *gin.Context, req *ruisUtil.Map) {
 		c.String(500, "param err!")
 		return
 	}
+	isup := true
 	usr := dbService.FindUser("admin")
 	if usr == nil {
-		c.String(511, "未找到用户!")
-		return
+		isup = false
+		usr = &model.SysUser{}
+		usr.Xid = "admin"
+		usr.Name = "root"
+		usr.Nick = "超级管理员"
+		usr.Times = time.Now()
 	}
 	if usr.Pass != "" {
 		c.String(512, "what??!")
 		return
 	}
 	usr.Pass = ruisUtil.Md5String(pass)
-	_, err := comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+	var err error
+	if isup {
+		_, err = comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+	} else {
+		_, err = comm.Db.Insert(usr)
+	}
 	if err != nil {
 		c.String(511, "服务错误!")
 		return
@@ -88,6 +126,10 @@ func Install(c *gin.Context, req *ruisUtil.Map) {
 }
 
 func Uppass(c *gin.Context, req *ruisUtil.Map) {
+	if comm.NoUppass {
+		c.String(511, "管理员禁止修改密码!")
+		return
+	}
 	pass := req.GetString("pass")
 	newpass := req.GetString("newpass")
 	if pass == "" || newpass == "" {

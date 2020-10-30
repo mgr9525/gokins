@@ -1,5 +1,5 @@
 <template>
-	<el-dialog title="流水线编辑" :visible.sync="formVisible" :close-on-click-modal="false">
+	<el-dialog title="流水线编辑" :visible.sync="formVisible" :close-on-click-modal="false" width="800px">
         <el-col :span="24" style="margin-bottom: 20px;">
             <el-form :model="formData" label-width="80px" :rules="formRules" ref="formd">
 				<el-form-item label="项目名称" prop="Title">
@@ -8,11 +8,11 @@
 				<el-form-item label="描述">
 					<el-input type="textarea" v-model="formData.Desc" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="运行目录">
+				<el-form-item label="工作目录">
 					<el-input v-model="formData.Wrkdir" auto-complete="off"></el-input>
 				</el-form-item>
-				<el-form-item label="目录问题">
-					<el-switch v-model="formData.clrdir" active-text="创建并清空运行目录"></el-switch>
+				<el-form-item label="目录">
+					<el-switch v-model="formData.clrdir" active-text="清空工作目录"></el-switch>
 				</el-form-item>
 				<el-form-item label="环境变量">
 					<el-input type="textarea" v-model="formData.Envs" auto-complete="off" :rows="8" placeholder="每行一个变量,格式：name=xxxx"></el-input>
@@ -53,7 +53,7 @@
                     Desc: '',
                     Envs:'',
                     Wrkdir:'',
-                    clrdir:false
+                    clrdir:false,
                 }
                 if(e)
                 this.formData={
@@ -62,7 +62,7 @@
                     Desc: e.Desc,
                     Envs:e.Envs,
                     Wrkdir:e.Wrkdir,
-                    clrdir:e.Clrdir==1
+                    clrdir:e.Clrdir==1,
                 }
             },/*handleSelect:function(id){
                 this.tmpltCont='';
