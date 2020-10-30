@@ -35,7 +35,7 @@ Gokins是一个由Go语言和Vue编写的款轻量级、能够持续集成和持
 > 1. 本示例仅提供展示作用(登录密码：123456)
 > 2. 此示例每天凌晨会有gokins定时器 __重新编译__
 > 3. 如果进不去，就是被其他人玩坏了，请等待重新编译（第二天早点来）
-> 4. 示例提供git,golang,java8,maven环境
+> 4. 示例提供git,gcc,golang,java8,maven环境
 
 ## Quick Start
 
