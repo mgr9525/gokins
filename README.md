@@ -30,12 +30,12 @@ Gokins是一个由Go语言和Vue编写的款轻量级、能够持续集成和持
    
 ## Gokins 官网
 
-<font size="3" color = "red">地址 : http://gokins.cn </font><br /> 
+**地址 : http://gokins.cn** 
 
 
 ## Demo
 
-<font size="3" color = "red">体验地址：http://gokins.cn:8030 </font><br /> 
+**体验地址：http://gokins.cn:8030**
 
 
 
