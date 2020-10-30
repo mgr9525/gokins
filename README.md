@@ -27,10 +27,20 @@ Gokins是一个由Go语言和Vue编写的款轻量级、能够持续集成和持
 * **安全**
     
     绝不收集任何用户、服务器信息，是一个独立安全的服务
+    
+## Demo
+
+[demo-示例展示-点击这里](http://gokins.cn:8030).
+
+> 1. 本示例仅提供展示作用(登录密码：123456)
+> 2. 此示例每天凌晨会有gokins定时器__重新编译__
+> 3. 如果进不去，就是被其他人玩坏了，请等待重新编译（第二天早点来）
+> 4. 示例提供git,golang,java8,maven环境
 
 ## Quick Start
 
 It is super easy to get started with your first project.
+
 
 #### Step 1: 下载
 
