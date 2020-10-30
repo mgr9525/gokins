@@ -10,7 +10,7 @@
  Target Server Version : 3030001
  File Encoding         : 65001
 
- Date: 23/10/2020 20:25:46
+ Date: 30/10/2020 11:08:09
 */
 
 PRAGMA foreign_keys = false;
@@ -25,12 +25,6 @@ CREATE TABLE "sys_param" (
   "cont" blob,
   "times" datetime
 );
-
--- ----------------------------
--- Records of sys_param
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for sys_user
@@ -51,13 +45,6 @@ CREATE TABLE "sys_user" (
 );
 
 -- ----------------------------
--- Records of sys_user
--- ----------------------------
-BEGIN;
-INSERT INTO "sys_user" VALUES (1, 'admin', 'root', NULL, '超级管理员', NULL, '2020-07-08 07:25:53', NULL, NULL, NULL);
-COMMIT;
-
--- ----------------------------
 -- Table structure for t_model
 -- ----------------------------
 DROP TABLE IF EXISTS "t_model";
@@ -70,15 +57,8 @@ CREATE TABLE "t_model" (
   "del" integer DEFAULT 0,
   "envs" text,
   "wrkdir" text,
-  "clrdir" integer DEFAULT 0,
-  "timer_switch" integer
+  "clrdir" integer DEFAULT 0
 );
-
--- ----------------------------
--- Records of t_model
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_model_run
@@ -97,12 +77,6 @@ CREATE TABLE "t_model_run" (
 );
 
 -- ----------------------------
--- Records of t_model_run
--- ----------------------------
-BEGIN;
-COMMIT;
-
--- ----------------------------
 -- Table structure for t_output
 -- ----------------------------
 DROP TABLE IF EXISTS "t_output";
@@ -113,12 +87,6 @@ CREATE TABLE "t_output" (
   "output" text,
   "times" datetime
 );
-
--- ----------------------------
--- Records of t_output
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_plugin
@@ -138,12 +106,6 @@ CREATE TABLE "t_plugin" (
 );
 
 -- ----------------------------
--- Records of t_plugin
--- ----------------------------
-BEGIN;
-COMMIT;
-
--- ----------------------------
 -- Table structure for t_plugin_run
 -- ----------------------------
 DROP TABLE IF EXISTS "t_plugin_run";
@@ -157,12 +119,6 @@ CREATE TABLE "t_plugin_run" (
   "state" integer,
   "excode" integer
 );
-
--- ----------------------------
--- Records of t_plugin_run
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Table structure for t_trigger
@@ -186,12 +142,6 @@ CREATE TABLE "t_trigger" (
   "opt3" text,
   PRIMARY KEY ("id")
 );
-
--- ----------------------------
--- Records of t_trigger
--- ----------------------------
-BEGIN;
-COMMIT;
 
 -- ----------------------------
 -- Auto increment value for sys_param

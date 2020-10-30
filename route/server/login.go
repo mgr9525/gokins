@@ -3,6 +3,7 @@ package server
 import (
 	"gokins/comm"
 	"gokins/core"
+	"gokins/model"
 	"gokins/service/dbService"
 	"gokins/service/utilService"
 	"time"
@@ -87,17 +88,27 @@ func Install(c *gin.Context, req *ruisUtil.Map) {
 		c.String(500, "param err!")
 		return
 	}
+	isup := true
 	usr := dbService.FindUser("admin")
 	if usr == nil {
-		c.String(511, "未找到用户!")
-		return
+		isup = false
+		usr = &model.SysUser{}
+		usr.Xid = "admin"
+		usr.Name = "root"
+		usr.Nick = "超级管理员"
+		usr.Times = time.Now()
 	}
 	if usr.Pass != "" {
 		c.String(512, "what??!")
 		return
 	}
 	usr.Pass = ruisUtil.Md5String(pass)
-	_, err := comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+	var err error
+	if isup {
+		_, err = comm.Db.Cols("pass").Where("id=?", usr.Id).Update(usr)
+	} else {
+		_, err = comm.Db.Insert(usr)
+	}
 	if err != nil {
 		c.String(511, "服务错误!")
 		return
