@@ -58,6 +58,36 @@ function main(){
 }
 `,
 	}
+	HookjsMap["gitea"] = &Hookjs{
+		Uis:  map[string]string{"token": "string", "branch": "string"},
+		Desc: "secret:秘钥,branch:push对象分支",
+		Defs: `{"secret":"pwd","branch":"master"}`,
+		js: `
+
+function main(){
+	console.log('start run main function!!!!');
+	var ret={check:false};
+	var conf=getConf();
+    var body=getBody();
+	var event=getHeader('X-Gitea-Event');
+	if(conf.secret!=body.secret){
+		ret.errs='触发请求秘钥错误';
+		return ret;
+    }
+
+    if(event!='push'||!body.ref||body.ref==''){
+        return ret;
+    }
+
+    console.log(conf.branch,body.ref);
+    if(conf.branch&&conf.branch!=''&&body.ref!='refs/heads/'+conf.branch){
+        return ret;
+    }
+	ret.check=true;
+	return ret
+}
+`,
+	}
 	HookjsMap["github"] = &Hookjs{
 		Uis:  map[string]string{"password": "string", "branch": "string"},
 		Desc: "password:签名秘钥,branch:push对象分支",
