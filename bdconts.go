@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	bdsqls()
+	//bdsqls()
 	bdzip()
 }
 
