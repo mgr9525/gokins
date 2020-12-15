@@ -13,9 +13,9 @@ func Init() {
 
 	comm.Gin.Use(core.MidAccessAllow)
 
-	//comm模块路由
-	gpComm := comm.Gin.Group("/comm")
+	// comm模块路由
 	{
+		gpComm := comm.Gin.Group("/comm")
 		gpComm.Any("/info", server.CommInfo)
 		gpLogin := comm.Gin.Group("/lg")
 		gpLogin.Any("/info", server.LoginInfo)
@@ -24,9 +24,9 @@ func Init() {
 		gpLogin.Any("/uppass", core.GinHandler(server.Uppass))
 	}
 
-	//流水线路由
-	gpModel := comm.Gin.Group("/model")
+	// 流水线路由
 	{
+		gpModel := comm.Gin.Group("/model")
 		gpModel.Use(utilService.MidNeedLogin)
 		gpModel.Any("/get", core.GinHandler(server.ModelGet))
 		gpModel.Any("/list", core.GinHandler(server.ModelList))
@@ -38,9 +38,9 @@ func Init() {
 		gpModel.Any("/copy", core.GinHandler(server.ModelCopy))
 	}
 
-	//插件路由
-	gpPlug := comm.Gin.Group("/plug")
+	// 插件路由
 	{
+		gpPlug := comm.Gin.Group("/plug")
 		gpPlug.Use(utilService.MidNeedLogin)
 		gpPlug.Any("/list", core.GinHandler(server.PlugList))
 		gpPlug.Any("/edit", core.GinHandler(server.PlugEdit))
@@ -49,9 +49,9 @@ func Init() {
 		gpPlug.Any("/log", core.GinHandler(server.PlugLog))
 	}
 
-	//触发器路由
-	gpTimer := comm.Gin.Group("/trigger")
+	// 触发器路由
 	{
+		gpTimer := comm.Gin.Group("/trigger")
 		gpTimer.Use(utilService.MidNeedLogin)
 		gpTimer.Any("/list", core.GinHandler(server.TriggerList))
 		gpTimer.Any("/edit", core.GinHandler(server.TriggerEdit))
@@ -59,9 +59,9 @@ func Init() {
 		gpTimer.Any("/hooks", server.TriggerHooks)
 	}
 
-	//hook
-	gpHook := comm.Gin.Group("/hook")
+	// hook
 	{
+		gpHook := comm.Gin.Group("/hook")
 		gpHook.Any("/trigger/:trid", server.HookTrigger)
 	}
 }

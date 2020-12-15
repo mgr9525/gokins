@@ -19,7 +19,7 @@ func TriggerList(c *gin.Context, req *ruisUtil.Map) {
 	ls := make([]*model.TTrigger, 0)
 	ses := comm.Db.Where("del !='1'")
 	if q != "" {
-		ses.And("name like ?", "%"+q+"%")
+		ses.And("title like ?", "%"+q+"%")
 	}
 	page, err := core.XormFindPage(ses, &ls, pg, 20)
 	if err != nil {
