@@ -16,6 +16,7 @@ func bdsqls() {
 	ioutil.WriteFile("comm/dbfl.go",
 		[]byte(fmt.Sprintf("package comm\n\nconst sqls = `\n%s\n`", string(bts))),
 		0644)
+	println("sql insert go ok!!!")
 }
 func bdzip() {
 	bts, _ := ioutil.ReadFile("uis/vue-admin/dist/dist.zip")
@@ -23,4 +24,5 @@ func bdzip() {
 	ioutil.WriteFile("comm/vuefl.go",
 		[]byte(fmt.Sprintf("package comm\n\nconst StaticPkg = \"%s\"", cont)),
 		0644)
+	println("ui insert go ok!!!")
 }
