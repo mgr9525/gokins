@@ -1,6 +1,7 @@
 package mgr
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"runtime"
 	"strings"
 	"time"
@@ -101,8 +101,18 @@ func (c *RunTask) run() {
 	c.end(4, "")
 }
 
-var regPATH = regexp.MustCompile(`^PATH=`)
-
+func writeEnvs(buf *bytes.Buffer, line string) {
+	if strings.Index(line, "=") <= 0 {
+		return
+	}
+	vs := strings.ReplaceAll(line, "\t", ``)
+	vs = strings.ReplaceAll(vs, "\n", ` `)
+	vs = strings.ReplaceAll(vs, `"`, `\"`)
+	vs = strings.ReplaceAll(vs, `'`, `\'`)
+	buf.WriteString("\n")
+	buf.WriteString(fmt.Sprintf(`export %s`, vs))
+	buf.WriteString("\n")
+}
 func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) {
 	defer ruisUtil.Recovers("RunTask.run", func(errs string) {
 		rterr = errors.New(errs)
@@ -142,32 +152,29 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 		return rn, err
 	}
 	defer logfl.Close()
+
+	buf := &bytes.Buffer{}
+	if c.Md.Envs != "" {
+		str := strings.ReplaceAll(c.Md.Envs, "\t", "")
+		envs := strings.Split(str, "\n")
+		for _, s := range envs {
+			writeEnvs(buf, s)
+		}
+	}
+	writeEnvs(buf, "WORKDIR="+c.Md.Wrkdir)
+	buf.WriteString("\n")
+	buf.WriteString(pgn.Cont)
+	buf.WriteString("\n")
+
 	name := "sh"
 	par0 := "-c"
 	if runtime.GOOS == "windows" {
 		name = "cmd"
 		par0 = "/c"
 	}
-	cmd := exec.CommandContext(c.ctx, name, par0, pgn.Cont)
+	cmd := exec.CommandContext(c.ctx, name, par0, buf.String())
 	cmd.Stdout = logfl
 	cmd.Stderr = logfl
-	if c.Md.Envs != "" {
-		noPath := true
-		str := strings.ReplaceAll(c.Md.Envs, "\t", "")
-		envs := strings.Split(str, "\n")
-		for i, s := range envs {
-			if regPATH.MatchString(s) {
-				noPath = false
-				envs[i] = strings.ReplaceAll(s, "$PATH", os.Getenv("PATH"))
-				envs[i] = strings.ReplaceAll(s, "${PATH}", os.Getenv("PATH"))
-			}
-		}
-		if noPath {
-			envs = append(envs, "PATH="+os.Getenv("PATH"))
-		}
-		envs = append(envs, "WORKDIR="+c.Md.Wrkdir)
-		cmd.Env = envs
-	}
 	if c.Md.Wrkdir != "" {
 		cmd.Dir = c.Md.Wrkdir
 	} else if comm.Dir != "" {
