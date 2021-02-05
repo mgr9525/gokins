@@ -1,6 +1,7 @@
 package mgr
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -10,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"bytes"
 	"runtime"
 	"strings"
 	"time"
@@ -102,7 +102,7 @@ func (c *RunTask) run() {
 }
 
 func writeEnvs(buf *bytes.Buffer, line string) {
-	if strings.Index(line,"=")<=0{
+	if strings.Index(line, "=") <= 0 {
 		return
 	}
 	vs := strings.ReplaceAll(line, "\t", ``)
@@ -161,10 +161,10 @@ func (c *RunTask) runs(pgn *model.TPlugin) (rns *model.TPluginRun, rterr error) 
 			writeEnvs(buf, s)
 		}
 	}
-	writeEnvs(buf,"WORKDIR="+c.Md.Wrkdir)
-	buf.WriteString("\n");
-	buf.WriteString(pgn.Cont);
-	buf.WriteString("\n");
+	writeEnvs(buf, "WORKDIR="+c.Md.Wrkdir)
+	buf.WriteString("\n")
+	buf.WriteString(pgn.Cont)
+	buf.WriteString("\n")
 
 	name := "sh"
 	par0 := "-c"
