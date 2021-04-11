@@ -24,11 +24,15 @@ jobs:
           CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o gokins-linux-amd64 main.go
           CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o gokins-darwin-amd64 main.go
 
+      - name: Get version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+
       - name: Create Release
         run: |
-          hub release create -m "Gokins ${{ github.ref }}" \
+          hub release create -m "Gokins ${{ steps.get_version.outputs.VERSION }}" \
           -a gokins-linux-amd64 \
           -a gokins-darwin-amd64 \
-          ${{ github.ref }}
+          ${{ steps.get_version.outputs.VERSION }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
