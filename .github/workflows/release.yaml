@@ -29,7 +29,7 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: echo ::set-output name=VERSION::${{tags}}
+        run: echo ::set-output name=VERSION::${tags}
 
       - name: Create Release
         run: |
