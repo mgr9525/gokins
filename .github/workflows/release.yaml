@@ -2,8 +2,11 @@ name: Release
 
 on:
   push:
+    branches:    
+    # Push events on main branch
+    - dev-yanmi
     tags:
-      - "v*"
+      - "v0.2.3"
 
 jobs:
   release:
