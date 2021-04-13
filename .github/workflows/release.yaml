@@ -6,7 +6,7 @@ on:
     # Push events on main branch
   # - dev-yanmi
    tags:
-     - 'v*'
+     - 'v*.*.*'
 
 jobs:
   release:
