@@ -36,7 +36,7 @@ func init() {
 		return
 	}
 	println("dir:" + dir)
-	flag.StringVar(&comm.Dir, "d", dir, "数据目录")
+	flag.StringVar(&comm.Dir, "d", dir, "工作目录")
 	flag.StringVar(&comm.Host, "bind", ":8030", "绑定地址")
 	flag.BoolVar(&comm.NoUppass, "nps", false, "是否禁止修改密码")
 	flag.IntVar(&comm.RunTaskLen, "rln", 5, "同时执行的流水线数量")
