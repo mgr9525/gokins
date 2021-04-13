@@ -72,7 +72,7 @@ It is super easy to get started with your first project.
 #### 下载运行
 
 - github地址 ： https://github.com/mgr9525/gokins
-- gitee地址 ： https://gitee.com/mgr9525/gokins
+- gitee地址 ： https://gitee.com/gokins/gokins
 
 可在对应平台需找发行版
 
