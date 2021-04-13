@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"gokins/comm"
 	"gokins/model"
+	"gokins/service/dbService"
 	"time"
 
 	"github.com/go-xorm/xorm"
@@ -15,7 +16,7 @@ var dbold *xorm.Engine
 
 func MoveModels() {
 	var olds []*ruisUtil.Map
-	err := dbold.SQL("select * from t_model").Find(&olds)
+	err := dbold.SQL("select * from t_model").Where("del!=1").Find(&olds)
 	if err != nil {
 		fmt.Println("find model err:" + err.Error())
 		return
@@ -53,9 +54,9 @@ func MoveModels() {
 
 func mvPlugin(tid int64, md *model.TModel) {
 	var olds []*ruisUtil.Map
-	err := dbold.SQL("select * from t_plugin where tid=?", tid).Find(&olds)
+	err := dbold.SQL("select * from t_plugin where tid=?", tid).Where("del!=1").Find(&olds)
 	if err != nil {
-		fmt.Println("find model err:" + err.Error())
+		println("find model err:" + err.Error())
 		return
 	}
 	for _, v := range olds {
@@ -89,8 +90,107 @@ func mvPlugin(tid int64, md *model.TModel) {
 		}
 		_, err = comm.Db.Insert(ne)
 		if err != nil {
-			fmt.Sprintf("insert plug err:" + err.Error())
+			println("insert plug err:" + err.Error())
 			break
+		}
+	}
+}
+
+func MoveTrigger() {
+	var olds []*ruisUtil.Map
+	err := dbold.SQL("select * from t_trigger").Where("del!=1").Find(&olds)
+	if err != nil {
+		//fmt.Println("find trigger err:" + err.Error())
+		return
+	}
+	for _, v := range olds {
+		mid, _ := v.GetInt("mid")
+		meid, _ := v.GetInt("meid")
+		del, err := v.GetInt("del")
+		if err != nil {
+			continue
+		}
+		enable, err := v.GetInt("enable")
+		if err != nil {
+			continue
+		}
+		ne := &model.TTrigger{}
+		ne.Uid = v.GetString("uid")
+		ne.Types = v.GetString("types")
+		ne.Title = v.GetString("title")
+		ne.Desc = v.GetString("desc")
+		ne.Config = v.GetString("config")
+		ne.Del = int(del)
+		ne.Enable = int(enable)
+		ne.Errs = v.GetString("errs")
+		ne.Mid = int(mid)
+		ne.Meid = int(meid)
+		if tm, ok := v.Get("times").(time.Time); ok {
+			ne.Times = tm
+		}
+		_, err = comm.Db.Insert(ne)
+		if err != nil {
+			println("MoveTrigger err:" + err.Error())
+			return
+		}
+	}
+}
+
+func MoveUser() {
+	var olds []*ruisUtil.Map
+	err := dbold.SQL("select * from sys_user").Find(&olds)
+	if err != nil {
+		fmt.Println("find user err:" + err.Error())
+		return
+	}
+	for _, v := range olds {
+		isup := true
+		ne := dbService.FindUserName(v.GetString("name"))
+		if ne == nil {
+			isup = false
+			ne = &model.SysUser{}
+			ne.Xid = v.GetString("xid")
+			ne.Name = v.GetString("name")
+		}
+		ne.Pass = v.GetString("pass")
+		ne.Phone = v.GetString("phone")
+		ne.Avat = v.GetString("avat")
+		if tm, ok := v.Get("times").(time.Time); ok {
+			ne.Times = tm
+		}
+		if isup {
+			_, err = comm.Db.Cols("pass", "phone", "avat", "times").Where("id=?", ne.Id).Update(ne)
+		} else {
+			_, err = comm.Db.Insert(ne)
+		}
+		if err != nil {
+			println("MoveTrigger err:" + err.Error())
+			return
+		}
+	}
+}
+func MoveParam() {
+	var olds []*ruisUtil.Map
+	err := dbold.SQL("select * from sys_param").Find(&olds)
+	if err != nil {
+		fmt.Println("find trigger err:" + err.Error())
+		return
+	}
+	for _, v := range olds {
+		cont, ok := v.Get("cont").([]byte)
+		if !ok {
+			continue
+		}
+		ne := &model.SysParam{}
+		ne.Key = v.GetString("key")
+		ne.Cont = cont
+		if tm, ok := v.Get("times").(time.Time); ok {
+			ne.Times = tm
+		}
+		_, err = comm.Db.Insert(ne)
+		if err != nil {
+			println("MoveTrigger err:" + err.Error())
+			return
 		}
 	}
 }

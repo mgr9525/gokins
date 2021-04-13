@@ -2,6 +2,7 @@
 
 *.dat
 *.class
+/ruis.go
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/

@@ -2,12 +2,15 @@ package server
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
-	ruisUtil "github.com/mgr9525/go-ruisutil"
 	"gokins/comm"
 	"gokins/core"
+	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
+	"gokins/service/utilService"
+
+	"github.com/gin-gonic/gin"
+	ruisUtil "github.com/mgr9525/go-ruisutil"
 )
 
 func TriggerList(c *gin.Context, req *ruisUtil.Map) {
@@ -16,7 +19,7 @@ func TriggerList(c *gin.Context, req *ruisUtil.Map) {
 	ls := make([]*model.TTrigger, 0)
 	ses := comm.Db.Where("del !='1'")
 	if q != "" {
-		ses.And("name like ?", "%"+q+"%")
+		ses.And("title like ?", "%"+q+"%")
 	}
 	page, err := core.XormFindPage(ses, &ls, pg, 20)
 	if err != nil {
@@ -27,14 +30,21 @@ func TriggerList(c *gin.Context, req *ruisUtil.Map) {
 }
 
 func TriggerEdit(c *gin.Context, req *models.Trigger) {
-	if req.Types < 0 || req.Types > 3 {
+	if req.Types == "" || req.Title == "" {
 		c.String(500, "param err")
 		return
 	}
+	if req.Types == "worked" && req.Mid == req.Meid {
+		c.String(500, "两个流水线不能相等")
+		return
+	}
+	lgusr := utilService.CurrMUser(c)
+	req.Uid = lgusr.Xid
 	if err := req.Save(); err != nil {
 		c.String(500, "save err:"+err.Error())
 		return
 	}
+	mgr.TriggerMgr.Refresh(req.Id)
 	c.String(200, fmt.Sprintf("%d", req.Id))
 }
 
@@ -50,4 +60,8 @@ func TriggerDel(c *gin.Context, req *ruisUtil.Map) {
 		return
 	}
 	c.String(200, fmt.Sprintf("%d", m.Id))
+}
+
+func TriggerHooks(c *gin.Context) {
+	c.JSON(200, mgr.HookjsMap)
 }

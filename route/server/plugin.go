@@ -1,12 +1,14 @@
 package server
 
 import (
+	"bytes"
 	"fmt"
 	"gokins/comm"
-	"gokins/mgr"
 	"gokins/model"
 	"gokins/models"
 	"gokins/service/dbService"
+	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	ruisUtil "github.com/mgr9525/go-ruisutil"
@@ -52,6 +54,9 @@ func PlugDel(c *gin.Context, req *ruisUtil.Map) {
 	c.String(200, fmt.Sprintf("%d", m.Id))
 }
 func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
+	if req.GetBool("first") == false {
+		time.Sleep(time.Second)
+	}
 	id, err := req.GetInt("id")
 	if err != nil || id <= 0 {
 		c.String(500, "param err")
@@ -78,10 +83,13 @@ func PlugRuns(c *gin.Context, req *ruisUtil.Map) {
 	res := ruisUtil.NewMap()
 	res.Set("list", ls)
 	res.Set("tid", mr.Tid)
-	res.Set("end", mr.State >= 2)
+	res.Set("state", mr.State)
+	res.Set("errs", mr.Errs)
+	res.Set("end", mr.State != 0 && mr.State != 1)
 	c.JSON(200, res)
 }
 func PlugLog(c *gin.Context, req *ruisUtil.Map) {
+	pos, _ := req.GetInt("pos")
 	tid, err := req.GetInt("tid")
 	if err != nil || tid <= 0 {
 		c.String(500, "param err")
@@ -94,20 +102,43 @@ func PlugLog(c *gin.Context, req *ruisUtil.Map) {
 	}
 	mr := dbService.GetModelRun(int(tid))
 	if mr == nil {
-		c.String(404, "not found")
+		c.String(404, "not found mr")
 		return
 	}
-	e := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
-	if e == nil {
-		c.String(404, "not found")
+	rn := dbService.FindPluginRun(mr.Tid, mr.Id, int(pid))
+	if rn == nil {
+		c.String(404, "not found rn")
 		return
 	}
-	res := ruisUtil.NewMap()
-	res.Set("up", true)
-	res.Set("text", mgr.ExecMgr.TaskRead(mr.Id, e.Id))
-	if e != nil && e.State >= 2 {
-		res.Set("up", false)
-		res.Set("text", e.Output)
+
+	ln := pos
+	bts := make([]byte, 1024)
+	buf := &bytes.Buffer{}
+	ret := ruisUtil.NewMap()
+	ret.Set("id", rn.Id)
+	ret.Set("text", "")
+	logpth := fmt.Sprintf("%s/data/logs/%d/%d.log", comm.Dir, rn.Tid, rn.Id)
+	fl, err := os.Open(logpth)
+	if err == nil {
+		if pos > 0 {
+			_, err = fl.Seek(pos, 0)
+			if err != nil {
+				c.String(500, "Seek err:"+err.Error())
+				return
+			}
+		}
+		for {
+			n, err := fl.Read(bts)
+			if n > 0 {
+				ln += int64(n)
+				buf.Write(bts[:n])
+			}
+			if err != nil {
+				break
+			}
+		}
+		ret.Set("text", buf.String())
 	}
-	c.JSON(200, res)
+	ret.Set("pos", ln)
+	c.JSON(200, ret)
 }

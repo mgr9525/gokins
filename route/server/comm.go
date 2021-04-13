@@ -10,6 +10,6 @@ import (
 func CommInfo(c *gin.Context) {
 	root := dbService.FindUser("admin")
 	info := ruisUtil.NewMap()
-	info.Set("need_install", root.Pass == "")
+	info.Set("need_install", root == nil || root.Pass == "")
 	c.JSON(200, info)
 }

@@ -22,15 +22,34 @@
       </el-table-column> -->
       <el-table-column type="index" width="60">
       </el-table-column>
-      <el-table-column label="名称" prop="Name" width="250" sortable>
+      <el-table-column label="名称" width="250">
+        <template slot-scope="{row}">
+          {{ row.Title }}
+          <el-tag size="mini" type="success" v-if="row.Enable==1">已激活</el-tag>
+          <el-tag size="mini" type="danger" v-else>未激活</el-tag>
+        </template>
       </el-table-column>
-      <el-table-column prop="Desc" label="描述" sortable>
+      <el-table-column label="描述">
+        <template slot-scope="{row}">
+          <span>{{ row.Desc }}</span>
+          <div>
+            <el-tag type="danger" v-if="row.Errs!=''">{{ row.Errs }}</el-tag>
+          </div>
+          <div>
+            <el-tag type="info" v-if="row.Types == 'hook'">hook地址：
+              {{host}}hook/trigger/{{ row.Id }}
+            </el-tag>
+          </div>
+        </template>
       </el-table-column>
-      <el-table-column prop="Types" label="触发器类型" :formatter="typesFormatter" sortable>
+      <el-table-column prop="Types" label="触发器类型" width="150" :formatter="typesFormatter">
+        <template slot-scope="{row}">
+          {{ getTypes(row.Types) }}
+        </template>
       </el-table-column>
       <el-table-column prop="Times" label="创建时间" width="200" :formatter="dateFormat" sortable>
       </el-table-column>
-      <el-table-column label="操作" width="300">
+      <el-table-column label="操作" width="200">
         <template slot-scope="{row}">
           <el-button-group>
             <el-button size="small" type="warning" @click="$refs.editor.show(row)">编辑</el-button>
@@ -72,6 +91,7 @@ export default {
       limit: 0,
       listdata: [],
       sels: [],//列表选中列
+      host: "",
     }
   },
   mounted() {
@@ -82,6 +102,11 @@ export default {
     getList() {
       this.loading = true;
       //NProgress.start();
+      // 判断URL后面有没有参数
+      const routerIndex = window.location.href.indexOf('#');
+      const url = window.location.href.slice(0, routerIndex > 0 ? routerIndex : window.location.href.length);
+      console.log("xxx:", url)
+      this.host = url;
       this.$post('/trigger/list', this.filters).then((res) => {
         console.log(res);
         this.loading = false;
@@ -113,11 +138,17 @@ export default {
           type: 'error'
         });
       });
-    }, batchRemove() {
-
-    },
-    typesFormatter: function (row, column) {
-      return row.Types == '1' ? "git触发" : row.Types == '2' ? "定时器触发" : "手动触发";
+    }, getTypes(typ) {
+      switch (typ) {
+        case "timer":
+          return "定时器";
+        case "hook":
+          return "hook";
+        case "worked":
+          return "流水线结束";
+        default:
+          return typ;
+      }
     },
     dateFormat: function (row, column) {
       var t = new Date(row.Times);//row 表示一行数据, updateTime 表示要格式化的字段名称

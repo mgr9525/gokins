@@ -6,11 +6,12 @@ import (
 )
 
 var (
-	Dir  string
-	Path string
-	Host string
-	Gin  *gin.Engine
-	Db   *xorm.Engine
+	Dir      string
+	Path     string
+	Host     string
+	NoUppass bool
+	Gin      *gin.Engine
+	Db       *xorm.Engine
 
 	RunTaskLen int = 5
 )

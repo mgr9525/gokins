@@ -23,12 +23,14 @@ func (c *execManager) Start() {
 		for {
 			select {
 			case <-mgrCtx.Done():
-				break
+				goto end
 			default:
 				c.run()
 				time.Sleep(time.Second)
 			}
 		}
+	end:
+		println("ctx end!")
 	}()
 }
 func (c *execManager) run() {
@@ -84,13 +86,4 @@ func (c *execManager) StopTask(id int) {
 	//v.State = -1
 	//_, err := comm.Db.Cols("state").Where("id=?", v.Id).Update(v)
 	//return err
-}
-func (c *execManager) TaskRead(id, pid int) string {
-	c.lk.Lock()
-	defer c.lk.Unlock()
-	e, ok := c.tasks[id]
-	if ok {
-		return e.read(pid)
-	}
-	return ""
 }
