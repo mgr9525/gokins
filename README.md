@@ -35,7 +35,7 @@ Gokins是一个由Go语言和Vue编写的款轻量级、能够持续集成和持
 
 ## Demo
 
-**体验地址：http://gokins.cn:8030**
+**体验地址：http://demo.gokins.cn:8030**
 
 
 
