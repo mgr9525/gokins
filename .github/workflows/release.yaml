@@ -2,9 +2,9 @@ name: Release
 
 on:
   push:
-    branches:    
+    # branches:    
     # Push events on main branch
-    - dev-yanmi
+    # - dev-yanmi
     tags:
       - "v0.2.3"
 
