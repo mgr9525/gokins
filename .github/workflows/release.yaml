@@ -6,7 +6,7 @@ on:
     # Push events on main branch
    - dev-yanmi
    tags:
-     - v0.2.3
+     - v*
 
 jobs:
   release:
@@ -29,7 +29,7 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: echo ::set-output name=VERSION::${tags}
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
 
       - name: Create Release
         run: |
