@@ -25,6 +25,6 @@ jobs:
         run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
           
       - name: Create Release
-        run: echo ${{steps.get_version.name}}
+        run: echo ${{steps.get_version.name.outputs.VERSION}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
