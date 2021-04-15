@@ -22,7 +22,9 @@ jobs:
 
       - name: Get version
         id: get_version
-
+        run: |
+          echo ${{ steps.get_version.name }}
+          
       - name: Create Release
         run: |
           echo ${{ steps.get_version.name }}
