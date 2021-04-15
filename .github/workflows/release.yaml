@@ -22,11 +22,9 @@ jobs:
 
       - name: Get version
         id: get_version
-        run: |
-          echo ${{ steps.get_version.name }}
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
           
       - name: Create Release
-        run: |
-          echo ${{ steps.get_version.name }}
+        run: echo ${{steps.get_version.name}}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
