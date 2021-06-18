@@ -92,7 +92,7 @@ function main(){
 	HookjsMap["codeup"] = &Hookjs{
 		Uis:  map[string]string{"token": "string", "branch": "string"},
 		Desc: "secret:秘钥,branch:push对象分支",
-		Defs: `{"secret":"pwd","branch":"master"}`,
+		Defs: `{"token":"pwd","branch":"master"}`,
 		js: `
 
 function main(){
