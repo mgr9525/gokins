@@ -1,6 +1,6 @@
 <p align="center"><img src="static/logo.jpg" width="50%"  height="50%"></p>
 
-# Goinks: *More Power*   
+# Gokins: *More Power*   
 构建赋能，更加强大
 
   [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
@@ -249,8 +249,5 @@ Gokins目前还处于需要不断进步的阶段，如果你有兴趣假如我�
 - 优化问题 ：
  1. 日志入库改为日志文件,减少数据库大小
  2. 环境变量PATH优化,加入变量获取
- 
-
-
  
 
