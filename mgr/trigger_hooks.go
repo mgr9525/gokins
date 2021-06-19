@@ -100,13 +100,14 @@ function main(){
 	var ret={check:false};
 	var conf=getConf();
     var body=getBody();
-	var event=getHeader('X-Codeup-Token	');
+	var secret=getHeader('X-Codeup-Token');
+	var event=getHeader('X-Codeup-Event');
 	if(conf.secret!=body.secret){
 		ret.errs='触发请求秘钥错误';
 		return ret;
     }
 
-    if(event!='push'||!body.ref||body.ref==''){
+    if(event!='Push Hook'||!body.ref||body.ref==''){
         return ret;
     }
 
