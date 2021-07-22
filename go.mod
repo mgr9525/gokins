@@ -1,14 +1,20 @@
-module gokins
+module github.com/gokins-main/gokins
 
-go 1.14
+go 1.15
 
 require (
+	github.com/boltdb/bolt v1.3.1
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
-	github.com/dlclark/regexp2 v1.4.0 // indirect
-	github.com/dop251/goja v0.0.0-20201020185350-bf18fe8c88fa
-	github.com/gin-gonic/gin v1.6.3
-	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
-	github.com/go-xorm/xorm v0.7.9
-	github.com/mattn/go-sqlite3 v1.14.0
-	github.com/mgr9525/go-ruisutil v1.0.8-0.20200702070004-0f4cf34379ef
+	github.com/gin-gonic/gin v1.7.2
+	github.com/go-git/go-git/v5 v5.4.2
+	github.com/go-sql-driver/mysql v1.5.0
+	github.com/gokins-main/core v0.0.0-20210718160656-01ed57f06c58
+	github.com/gokins-main/runner v0.0.0-20210722023302-e6ba8889bce8
+	github.com/golang-migrate/migrate/v4 v4.14.1
+	github.com/mgr9525/HyperByte-Transfer-Protocol v1.1.5
+	github.com/sirupsen/logrus v1.8.1
+	gopkg.in/alecthomas/kingpin.v2 v2.2.6
+	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c
+	xorm.io/builder v0.3.8
+	xorm.io/xorm v1.1.0
 )
