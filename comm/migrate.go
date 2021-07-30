@@ -83,12 +83,11 @@ func AssetNames() []string {
 
 // _bindata is a table, holding each asset generator, mapped to its name.
 var _bindata = map[string]func() ([]byte, error){
-	"mysql/000001_gokins.down.sql":  mysql_000001_gokins_down_sql,
-	"mysql/000001_gokins.up.sql":    mysql_000001_gokins_up_sql,
+	"mysql/000001_gokins.down.sql": mysql_000001_gokins_down_sql,
+	"mysql/000001_gokins.up.sql": mysql_000001_gokins_up_sql,
 	"sqlite/000001_gokins.down.sql": sqlite_000001_gokins_down_sql,
-	"sqlite/000001_gokins.up.sql":   sqlite_000001_gokins_up_sql,
+	"sqlite/000001_gokins.up.sql": sqlite_000001_gokins_up_sql,
 }
-
 // AssetDir returns the file names below a certain
 // directory embedded in the file by go-bindata.
 // For example if you run go-bindata on data/... and data contains the
@@ -125,17 +124,20 @@ func AssetDir(name string) ([]string, error) {
 }
 
 type _bintree_t struct {
-	Func     func() ([]byte, error)
+	Func func() ([]byte, error)
 	Children map[string]*_bintree_t
 }
-
 var _bintree = &_bintree_t{nil, map[string]*_bintree_t{
 	"mysql": &_bintree_t{nil, map[string]*_bintree_t{
-		"000001_gokins.down.sql": &_bintree_t{mysql_000001_gokins_down_sql, map[string]*_bintree_t{}},
-		"000001_gokins.up.sql":   &_bintree_t{mysql_000001_gokins_up_sql, map[string]*_bintree_t{}},
+		"000001_gokins.down.sql": &_bintree_t{mysql_000001_gokins_down_sql, map[string]*_bintree_t{
+		}},
+		"000001_gokins.up.sql": &_bintree_t{mysql_000001_gokins_up_sql, map[string]*_bintree_t{
+		}},
 	}},
 	"sqlite": &_bintree_t{nil, map[string]*_bintree_t{
-		"000001_gokins.down.sql": &_bintree_t{sqlite_000001_gokins_down_sql, map[string]*_bintree_t{}},
-		"000001_gokins.up.sql":   &_bintree_t{sqlite_000001_gokins_up_sql, map[string]*_bintree_t{}},
+		"000001_gokins.down.sql": &_bintree_t{sqlite_000001_gokins_down_sql, map[string]*_bintree_t{
+		}},
+		"000001_gokins.up.sql": &_bintree_t{sqlite_000001_gokins_up_sql, map[string]*_bintree_t{
+		}},
 	}},
 }}

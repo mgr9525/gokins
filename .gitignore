@@ -6,8 +6,6 @@
 *.dylib
 
 # Test binary, built with `go test -c`
-/.idea
-/.github
 /dbm.bat
 /dbm.sh
 /model.yml
