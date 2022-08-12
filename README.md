@@ -1,3 +1,8 @@
+# 项目已经转移仓库到下面地址维护
+
+## https://github.com/gokins/gokins
+
+
 
 # Gokins文档
 
